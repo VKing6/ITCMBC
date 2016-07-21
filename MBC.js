@@ -17,8 +17,8 @@ function clearInput() {
 
   ss.getRange('B5').setValue(null);
   ss.getRange('D5').setValue(null);
-  ss.getRange('B7:B8').setValue(null);
-  ss.getRange('B10:B13').setValue(null);
+  ss.getRange('B7:B8').setValue(0);
+  ss.getRange('B10:B13').setValue(0);
 }
 
 function clearSolution() {
