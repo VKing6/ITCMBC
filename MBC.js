@@ -92,7 +92,7 @@ function startSweepZone() {
 
 function printSolution(cell, solution, charge)
 {
-  str = charge + ': ' + ' Azimuth: ' + Math.round(solution.azimuth) + ', Quadrant: ' + solution.quadrants[charge].qd + ', tof: ' + solution.quadrants[charge].tof + ', distance: ' + solution.distance;
+  str = charge + ':\t    ' + ' Azimuth: ' + Math.round(solution.azimuth) + '        \tQuadrant: ' + solution.quadrants[charge].qd + '        \tTOF: ' + solution.quadrants[charge].tof + '        \tDistance: ' + solution.distance;
   ss.getRange(cell).setValue(str);
 }
 
