@@ -128,7 +128,7 @@ function calcDirection(start, end) {
   else if(start.easting > end.easting)
     return 180 + angle;
   else if(start.northing > end.northing)
-    return 90 + angle;
+    return 180 - angle;
   else
     return angle;
 }
