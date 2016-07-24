@@ -43,15 +43,9 @@ function processBty(baseEndPos, print) {
 function startSweepZone() {
   clearSweep();
   var shifts = setSweepZone();
-  ss.getRange('B20').setValue(shifts.targetLength);
-  for(var i = 0; i < guns.length; i++)
-    printSweepZoneSolution(guns[i].sweepzone, shifts.solutions[i]);
-}
-
-function printSweepZoneSolution(cell, solution)
-{
-  str = 'Azimuth ' + solution.baseaz + ' sweep ' + solution.sweep + ' mils ' + solution.shifts + ' deflections \n' + 'Quadrant ' + solution.baseqd + ' zone ' + solution.zone + ' mils ' + solution.shifts + ' quadrants';
-  ss.getRange(cell).setValue(str);
+  calculateController.sweepZone.setDistance(shifts.targetLength);
+  for(var i = 0; i < shifts.solutions.length; i++)
+    calculateController.guns[i].setSweepZoneResults(shifts.solutions[i]);
 }
 
 /*==============================================================================================================*/
@@ -142,22 +136,22 @@ function QuadrantFromRange(tableCols, distance, elevDiff) {
 /*==============================================================================================================*/
 
 function setSweepZone() {
-  var result = {};
-  result['solutions'] = [];
-  var error = '';
-  var charge = ss.getRange('B17').getValue();
-  var targetStartGrid = ss.getRange('D10').getValue();
-  var baseEndElev = ss.getRange('D11').getValue();
-  var startSolution = processBty(targetStartGrid, baseEndElev, false);
+  var result = {
+    solutions: [],
+    error: ''
+  };
+  var sweepzone = calculateController.sweepZone;
+  var targetStartPos = calculateController.adjust.getResultPos();
+  var startSolution = processBty(targetStartPos, false);
 
-  var shifts = ss.getRange('B18').getValue();
-  var targetEnd = ss.getRange('B16').getValue() + '';
-  var targetEndElev = ss.getRange('D16').getValue() + '';
-  var endSolution = processBty(targetEnd, targetEndElev, false);
-  var targetLength = calcDistance(targetStartGrid, targetEnd);
-  result['targetLength'] = targetLength;
+  var charge = sweepzone.getCharge();
+  var shifts = sweepzone.getShifts();
+  var targetEndPos = sweepzone.getTarget();
+  var endSolution = processBty(targetEndPos, false);
+  var targetLength = calcDistance(targetStartPos.mgrs, targetEndPos.mgrs);
+  result.targetLength = targetLength;
 
-  for (var i = 0; i < guns.length; i++) {
+  for (var i = 0; i < calculateController.guns.length; i++) {
     var startQuadrant = startSolution[i].quadrants[charge].qd;
     var quadrant = endSolution[i].quadrants[charge].qd;
     if (quadrant == null) {
@@ -171,11 +165,6 @@ function setSweepZone() {
     result['solutions'][i] = {'baseaz' : Math.round(startAzimuth), 'baseqd' : startQuadrant, 'sweep' : Math.round(sweep), 'zone' : zone, 'shifts' : shifts};
   }
   return result;
-}
-
-function getChargeSolution(charge) {
-  var range = ss.getRangeByName(charge);
-  return {'az' : range.getCell(1,1).getValue(), 'qd' : range.getCell(1,3).getValue()};
 }
 
 /*=========================================adjust===============================================================*/

@@ -36,7 +36,9 @@ var calculateController = {
 	sweepZone: {
 		getTarget: function() {return toPos(getCellValue('B16'), getCellValue('D16'))},
 		getCharge: function() {return getCellValue('B17')},
-		getShifts: function() {return getCellValue('B18')}
+		getShifts: function() {return getCellValue('B18')},
+		getDistance: function() {return getCellValue('B20')},
+		setDistance: function(distance) {setCellValue('B20', distance)}
 	}
 }
 
@@ -91,6 +93,9 @@ function generateGun(coords, elev, results, sweepzone)
   };
   res.setSweepZone = function(sweepzoneData) {
   	setCellValue(sweepzone, sweepzoneData);
+  }
+  res.setSweepZoneResults = function(solution) {
+  	setCellValue(sweepzone, 'Azimuth ' + solution.baseaz + ' sweep ' + solution.sweep + ' mils ' + solution.shifts + ' deflections \n' + 'Quadrant ' + solution.baseqd + ' zone ' + solution.zone + ' mils ' + solution.shifts + ' quadrants');
   }
   return res;
 }
