@@ -15,8 +15,16 @@ var calculateController = {
 	sheaf: {
 		getType: function() {return getCellValue('B6')},
 		getDir: function() {return getCellValue('B7')},
-		getlength: function() {return getCellValue('B8')},
-		isQuick: function() {return getCellValue('D6')}
+		getLength: function() {return getCellValue('B8')},
+		isQuick: function() {return getCellValue('D6')},
+		toJSON: function() {
+			return {
+				type: this.getType(),
+				dir: this.getDir(),
+				length: this.getLength(),
+				quick: this.isQuick()
+			}
+		}
 	},
 	adjust: {
 		getOT: function() {return getCellValue('B10')},
@@ -38,8 +46,17 @@ var calculateController = {
 		getCharge: function() {return getCellValue('B17')},
 		getShifts: function() {return getCellValue('B18')},
 		getDistance: function() {return getCellValue('B20')},
-		setDistance: function(distance) {setCellValue('B20', distance)}
-	}
+		setDistance: function(distance) {setCellValue('B20', distance)},
+		toJSON: function() {
+			return {
+				target: this.getTarget(),
+				charge: this.getCharge(),
+				shifts: this.getShifts()
+			}
+		}
+	},
+	getSaveReference: function() { return getCellValue('B29')},
+	getLoadReference: function() { return getCellValue('B25')}
 }
 
 calculateController.constructor();

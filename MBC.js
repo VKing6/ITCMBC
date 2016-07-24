@@ -208,8 +208,9 @@ function deltaNorthing(ot, ad, lr) {
 
 function load()
 {
-  var reference = ss.getRange('B25').getValue() + '';
-  
+  var ref = calculateController.getLoadReference();
+  var row = storeController.getLoadRow(ref);
+
   var data = targetSheet.getDataRange().getValues(); 
   for(n=0;n<data.length;++n){ 
     if(data[n][0].toString() == reference){ 
@@ -247,46 +248,10 @@ function load()
 
 function save()
 {
-  
-  var reference = ss.getRange('B29').getValue();
-  
-  var mgrs = ss.getRange('D10').getValue();
-  if(mgrs == '')
-    mgrs = ss.getRange('B5').getValue();
-  var elev = ss.getRange('D5').getValue();
-  if(elev == '')
-    elev = ss.getRange('D11').getValue();
-  
-  var sheaf = ss.getRange('B6').getValue();
-  var sheaf_dir = ss.getRange('B7').getValue();
-  var sheaf_length = ss.getRange('B8').getValue();
-  var quick_sheaf = ss.getRange('D6').getValue();
-  
-  var shift_mgrs = ss.getRange('B16').getValue();
-  var shift_elev = ss.getRange('B17').getValue();
-  var shift_charge = ss.getRange('B18').getValue();
-  var shift_shifts = ss.getRange('D16').getValue();
-  var data = targetSheet.getDataRange().getValues(); 
-  
-  for(n=1;n<data.length;++n){ 
-    if(data[n][0].toString() != ""&& data[n][0].toString() != reference){ 
-      continue;
-    }else{
-      targetSheet.getRange(n+1,1).setValue(reference);
-      targetSheet.getRange(n+1,2).setValue(mgrs);
-      targetSheet.getRange(n+1,3).setValue(elev);
-      
-      targetSheet.getRange(n+1,5).setValue(sheaf);
-      targetSheet.getRange(n+1,6).setValue(sheaf_dir);
-      targetSheet.getRange(n+1,7).setValue(sheaf_length);
-      targetSheet.getRange(n+1,8).setValue(quick_sheaf);
-      
-      targetSheet.getRange(n+1,10).setValue(shift_mgrs);
-      targetSheet.getRange(n+1,11).setValue(shift_charge);
-      targetSheet.getRange(n+1,12).setValue(shift_elev);
-      targetSheet.getRange(n+1,13).setValue(shift_shifts);
-      
-      break;
-    }
-  }
+  var ref = calculateController.getSaveReference();
+  var row = storeController.getSaveRow(ref);
+  row.setReference(ref);
+  row.setPosition(calculateController.adjust.getResultPos());
+  row.setSheafJSON(calculateController.sheaf.toJSON());
+  row.setShiftJSON(calculateController.sweepZone.toJSON());
 }
