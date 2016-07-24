@@ -23,7 +23,11 @@ var calculateController = {
 		getLR: function() {return getCellValue('B11')},
 		getAD: function() {return getCellValue('B12')},
 		getUD: function() {return getCellValue('B13')},
-		getResultPos: function() {return toPos(getCellValue('D10'), getCellValue('D11'))},
+		getResultPos: function() {
+			return cellFilled('D10') ? 
+				toPos(getCellValue('D10'), getCellValue('D11')) :
+				toPos(getCellValue('B5'), getCellValue('D5'))
+		},
 		setResultPos: function(pos) { 
 			setCellValue('D10', pos.mgrs_string);
 			setCellValue('D11', pos.elev);
@@ -43,10 +47,17 @@ function getCellValue(cell)
 {
 	return spreadSheet.getRange(cell).getValue() + '';
 }
+
 function setCellValue(cell, value)
 {
 	return spreadSheet.getRange(cell).setValue(value);
 }
+
+function cellFilled(cell)
+{
+	return (spreadSheet.getRange(cell) != '');
+}
+
 function toPos(mgrs, elev)
 {
 	return {
