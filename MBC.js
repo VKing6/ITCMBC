@@ -181,48 +181,26 @@ function getChargeSolution(charge) {
 /*=========================================adjust===============================================================*/
 
 function adjust() {
-  var data = readSheet();
-  var startGrid = ss.getRange('B2').getValue() + '';
-  var startElev = ss.getRange('D2').getValue() + '';
-  var res = adjustGridToGrid(data.grid, data.elev, data.ot, data.ad, data.lr, data.ud);
-  ss.getRange('D10').setValue(res.coords);
-  ss.getRange('D11').setValue(res.elev);
-  processBty(res.coords, res.elev, true);
+  var adjust = calculateController.adjust;
+  var res = adjustGridToGrid(adjust.getResultPos(), adjust.getOT(), adjust.getAD(), adjust.getLR(), adjust.getUD());
+  adjust.setResultPos(res);
+  processBty(res, res.elev, true);
 }
 
 function adjustGridToGrid(pos, ot, ad, lr, ud) {
   var de = deltaEasting(ot, ad, lr);
   var dn = deltaNorthing(ot, ad, lr);
-  var grid = splitGrid(grid);
 
   var startGrid = pos.mgrs;
   de = Math.round(de); dn = Math.round(dn);
   var startElev = pos.elev;
-  var endEasting = parseInt(grid.easting, 10) + de;
-  var endNorthing = parseInt(grid.northing, 10) + dn;
+  var endEasting = parseInt(startGrid.easting, 10) + de;
+  var endNorthing = parseInt(startGrid.northing, 10) + dn;
   endEasting = toFiveDigit(endEasting + '', true);
   endNorthing = toFiveDigit(endNorthing + '', true);
   var endGrid = endEasting + '' + endNorthing;
-  var endElev = parseInt(elev) + parseInt(ud);
+  var endElev = parseInt(pos.elev) + parseInt(ud);
   return toPos(endGrid, endElev);
-}
-
-function readSheet() {
-  var res = {};
-
-  if (ss.getRange('D10').getValue() == '') {
-    ss.getRange('D10').setValue(ss.getRange('B5').getValue());
-    ss.getRange('D11').setValue(ss.getRange('D5').getValue());
-  }
-
-  res['ot'] = ss.getRange('B10').getValue();
-  res['lr'] = ss.getRange('B11').getValue();
-  res['ad'] = ss.getRange('B12').getValue();
-  res['ud'] = ss.getRange('B13').getValue();
-  res['grid'] = ss.getRange('D10').getValue();
-  res['elev'] = ss.getRange('D11').getValue();
-  clearSolution();
-  return res;
 }
 
 function deltaEasting(ot, ad, lr) {
