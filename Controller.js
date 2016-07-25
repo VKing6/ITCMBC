@@ -1,6 +1,6 @@
 
 //Setup
-var spreadSheet =    SpreadsheetApp.getActiveSpreadsheet();
+var spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
 var calcSheet = spreadSheet.getSheetByName('Calculator');
 var tableSheet = spreadSheet.getSheetByName('Tables');
 var targetSheet = spreadSheet.getSheetByName('Stores');
