@@ -1,6 +1,7 @@
 
 //Setup
 var spreadSheet =  SpreadsheetApp.getActiveSpreadsheet();
+var calcSheet = spreadSheet.getSheetByName('Calculator');
 var tableSheet = spreadSheet.getSheetByName('Tables');
 var targetSheet = spreadSheet.getSheetByName('Stores');
 
@@ -10,27 +11,22 @@ var calculateController = {
 		this.guns[0] = generateGun('B2', 'D2', ['F3', 'F4', 'F5'], 'G16');
 		this.guns[1] = generateGun('B3', 'D3', ['F7', 'F8', 'F9'], 'G17');
 		this.guns[2] = generateGun('B4', 'D4', ['F11', 'F12', 'F13'], 'G18');
+		this.sheaf.init();
+		this.adjust.init();
+		this.sweepZone.init();
 	},
 	getTarget: function() {return toPos(getCellValue('B5'),getCellValue('D5'))},
 	sheaf: {
-		getType: function() {return getCellValue('B6')},
-		getDir: function() {return getCellValue('B7')},
-		getLength: function() {return getCellValue('B8')},
-		isQuick: function() {return getCellValue('D6')},
-		toJSON: function() {
-			return {
-				type: this.getType(),
-				dir: this.getDir(),
-				length: this.getLength(),
-				quick: this.isQuick()
-			}
-		}
+		init: function() {
+			generateObject(calculateController, this, [['Type', 'B6', null], ['Dir', 'B7', null], ['Length', 'B8', null], ['Quick', 'D6', null]]);
+		},
+		toJSON: function() {return getSheafJSON(this);},
+		fromJSON: function(sheaf) {return setSheafJSON(this, sheaf);}
 	},
 	adjust: {
-		getOT: function() {return getCellValue('B10')},
-		getLR: function() {return getCellValue('B11')},
-		getAD: function() {return getCellValue('B12')},
-		getUD: function() {return getCellValue('B13')},
+		init: function() {
+			generateObject(calculateController, this, [['OT', 'B10', null], ['LR', 'B11', null], ['AD', 'B12', null], ['UD', 'B13', null]]);
+		},
 		getResultPos: function() {
 			return cellFilled('D10') ? 
 				toPos(getCellValue('D10'), getCellValue('D11')) :
@@ -42,21 +38,22 @@ var calculateController = {
 		}
 	},
 	sweepZone: {
-		getTarget: function() {return toPos(getCellValue('B16'), getCellValue('D16'))},
-		getCharge: function() {return getCellValue('B17')},
-		getShifts: function() {return getCellValue('B18')},
-		getDistance: function() {return getCellValue('B20')},
-		setDistance: function(distance) {setCellValue('B20', distance)},
-		toJSON: function() {
-			return {
-				target: this.getTarget(),
-				charge: this.getCharge(),
-				shifts: this.getShifts()
-			}
-		}
+		init: function() {
+			generateObject(calculateController, this, [['Charge', 'B17', null], ['Num', 'B18', null], ['Distance', 'B20', null]]);
+		},
+		getPos: function() {return toPos(getCellValue('B16'), getCellValue('D16'))},
+		setPos: function(pos) {calculateController.setCellValue('B16', null, pos.mgrs_string); calculateController.setCellValue('D16', null, pos.elev);},
+		toJSON: function() {return getSweepZoneJSON(this);},
+		fromJSON: function(sweepZone) {return setSweepZoneJSON(this, sweepZone);}
 	},
 	getSaveReference: function() { return getCellValue('B29')},
-	getLoadReference: function() { return getCellValue('B25')}
+	getLoadReference: function() { return getCellValue('B25')},
+	getCellValue: function(ref, ref2) {
+		return calcSheet.getRange(ref).getValue() + '';
+	},
+	setCellValue: function(ref, ref2, value) {
+		calcSheet.getRange(ref).setValue(value + '');
+	}
 }
 
 calculateController.constructor();
@@ -128,6 +125,22 @@ function toFiveDigit(base, pre) {
     }
   }
   return base;
+}
+
+function generateObject(controller, object, array) {
+	for (var i = array.length - 1; i >= 0; i--) {
+		var variable = array[i];
+		generateGetSet(controller, object, variable[0], variable[1], variable[2]);
+	}
+}
+
+function generateGetSet(controller, object, name, ref, ref2) {
+	object['get' + name] = function(value){
+		return controller.getCellValue(ref, ref2, value) + '';
+	};
+	object['set' + name] = function(value){
+		return controller.setCellValue(ref, ref2, value);
+	};
 }
 
 /*======================================NEEDS TO BE UPDATED WITH CONTROLLER CODE==========================================*/

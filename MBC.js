@@ -210,40 +210,8 @@ function load()
 {
   var ref = calculateController.getLoadReference();
   var row = storeController.getLoadRow(ref);
-
-  var data = targetSheet.getDataRange().getValues(); 
-  for(n=0;n<data.length;++n){ 
-    if(data[n][0].toString() == reference){ 
-      Logger.log(data[n][0].toString());
-      var resultData = targetSheet.getRange(n + 1, 1, 1, 13);
-      var mgrs = resultData.getCell(1, 2).getValue();
-      var elev = resultData.getCell(1, 3).getValue();
-      
-      var sheaf = resultData.getCell(1, 5).getValue();
-      var sheaf_dir = resultData.getCell(1, 6).getValue();
-      var sheaf_length = resultData.getCell(1, 7).getValue();
-      var quick_sheaf = resultData.getCell(1, 8).getValue();
-      
-      var shift_mgrs = resultData.getCell(1, 10).getValue();
-      var shift_elev = resultData.getCell(1, 11).getValue();
-      var shift_charge = resultData.getCell(1, 12).getValue();
-      var shift_shifts = resultData.getCell(1, 13).getValue();
-      
-      ss.getRange('B5').setValue(mgrs);
-      ss.getRange('D5').setValue(elev);
-      
-      ss.getRange('B6').setValue(sheaf);
-      ss.getRange('B7').setValue(sheaf_dir);
-      ss.getRange('B8').setValue(sheaf_length);
-      ss.getRange('D6').setValue(quick_sheaf);
-      
-      ss.getRange('B16').setValue(shift_mgrs);
-      ss.getRange('B17').setValue(shift_charge);
-      ss.getRange('B18').setValue(shift_shifts);
-      ss.getRange('D16').setValue(shift_elev);
-      break;
-    };
-  }
+  calculateController.sheaf.fromJSON(row.sheaf.toJSON());
+  calculateController.sweepZone.fromJSON(row.sweepZone.toJSON());
 }
 
 function save()
@@ -252,6 +220,6 @@ function save()
   var row = storeController.getSaveRow(ref);
   row.setReference(ref);
   row.setPosition(calculateController.adjust.getResultPos());
-  row.setSheafJSON(calculateController.sheaf.toJSON());
-  row.setShiftJSON(calculateController.sweepZone.toJSON());
+  row.sheaf.fromJSON(calculateController.sheaf.toJSON());
+  row.sweepZone.fromJSON(calculateController.sweepZone.toJSON());
 }
