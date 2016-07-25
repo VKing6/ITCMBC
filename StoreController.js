@@ -2,10 +2,10 @@ var storeController = {
     getSaveRow: function(reference) {
         var data = targetSheet.getDataRange().getValues();
         for(n=1;n<data.length;++n){
-                if(data[n][0].toString() == "" || data[n][0].toString() == reference){
-                    return storeController.getRow(n + 1);
-                }
+            if(data[n][0].toString() == "" || data[n][0].toString() == reference){
+                return storeController.getRow(n + 1);
             }
+        }
     },
     getLoadRow: function(reference) {
         var data = targetSheet.getDataRange().getValues();
@@ -13,7 +13,7 @@ var storeController = {
             if(data[n][0].toString() == reference){
                 return storeController.getRow(n + 1);
             }
-    }
+        }
     },
     getRow: function(n) {
         var row = {
