@@ -1,0 +1,26 @@
+{"82mm_a3": [
+    {"charge": 0, "table": [
+        {"range": 100, "data": {"qd": 1493, "dqd": 9, "dtof": 1.4, "tof": 14, "xwind": 3.7, "hwind": 0.4, "twind": -0.3, "dectemp": 0, "inctemp": 0, "decdens": 0, "incdens": 0}},
+        {"range": 150, "data": {}},
+        {},
+        {},
+        {},
+        {"range": 450, "data": {}}
+    ]},
+    {"charge": 1, "table": [
+        {"range": 150, "data": {}},
+        {"range": 200, "data": {}},
+        {},
+        {},
+        {},
+        {"range": 1700, "data": {}}
+    ]},
+    {"charge": 2, "table": [
+        {"range": 250, "data": {}},
+        {"range": 300, "data": {}},
+        {},
+        {},
+        {},
+        {"range": 3100, "data": {}}
+    ]}
+]}
