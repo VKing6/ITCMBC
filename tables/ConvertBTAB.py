@@ -2,6 +2,8 @@
 
 import json
 
+# Array for input values as given by ace_mk6mortar_fnc_dev_buildTable
+# Top level array is each charge, then each range
 inArr = [
         [
         ["100","1493","9","1.4","14.0","3.7","0.4","-0.3","0.0","0.0","0.0","0.0"],
@@ -109,32 +111,30 @@ inArr = [
         ]
         ]
 weapon = "mortar_82"
-charges = [0,1,2]
+charges = [0,1,2]  # Charge numbers to apply to input tables
 
 if not len(charges)==len(inArr):
     raise ValueError("Charge table and input table of unequal length")
 
-table = {weapon: {"charges": charges}}
+table = {weapon: {"charges": charges}}  # Generate initial table and add charge array for lookup
 
 
-for cx, c in enumerate(charges):
+for idx, c in enumerate(charges):
     c = str(c)
-    minR = inArr[cx][0][0]
-    maxR = inArr[cx][len(inArr[cx])-1][0]
-    cTable = {c: dict(min=minR, max=maxR)}
+    minR = inArr[idx][0][0]  # Find max and min ranges for each charge
+    maxR = inArr[idx][len(inArr[idx])-1][0]
+    cTable = {c: dict(min=minR, max=maxR)}  # Generate table for the charge, then add the min and max range keys
     #print(cTable)
-    for r in inArr[cx]:
+    for r in inArr[idx]:  # For each range, create a table containing ballistic data
         rTable = {r[0]: dict(qd=float(r[1]), dqd=float(r[2]), dtof=float(r[3]), tof=float(r[4]),
                        xwind=float(r[5]), hwind=float(r[6]), twind=float(r[7]), dectemp=float(r[8]),
                        inctemp=float(r[9]), decdens=float(r[10]), incdens=float(r[11])) }
         #print(rTable)
-        cTable[c].update(rTable)
+        cTable[c].update(rTable)  # Add range table to charge table
     #print(cTable)
-    table[weapon].update(cTable)
-    
-#print(table["mortar_82"]["0"]["max"])
+    table[weapon].update(cTable)  # Add charge table to weapon table
 
-with open("{}.json".format(weapon), "w") as f:
+with open("{}.json".format(weapon), "w") as f:  # Write table in JSON format to "weaponName.json"
     json.dump(table, f)
 
 
