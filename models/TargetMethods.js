@@ -10,20 +10,26 @@ TargetMethods = {
         $.extend(object, variables);
         return object;
     },
-    grid: function(grid, elevation) {
-        return TargetMethods.generic({grid: grid, elevation: elevation}, function() {
-            position = Position.generate(this.grid, this.elevation);
-            return position;
-        });
+    Grid: {
+        new: function(variables) {
+            return TargetMethods.generic(variables, function() {
+                position = Position.generate(this.grid, this.elevation);
+                return position;
+            });
+        }
     },
-    polar: function(position, direction, distance, vi) {
-        return TargetMethods.generic({position: position, direction:direction, distance: distance, vi:vi}, function() {
-            return adjustGridToGrid(position, direction, distance, 0, vi);
-        });
+    Polar: {
+        new: function(variables) {
+            return TargetMethods.generic(variables, function() {
+                return adjustGridToGrid(this.position, this.direction, this.distance, 0, this.vi);
+            });
+        }
     },
-    shift: function(position, ot, ad, lr, ud) {
-        return TargetMethods.generic({position: position, ot:ot, ad:ad, lr:lr, ud:ud}, function() {
-            return adjustGridToGrid(position, ot, ad, lr, ud);
-        });
+    Shift: {
+        new: function(variables) {
+            return TargetMethods.generic(variables, function() {
+                return adjustGridToGrid(this.position, this.ot, this.ad, this.lr, this.ud);
+            });
+        }
     }
 }

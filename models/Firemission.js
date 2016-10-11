@@ -2,14 +2,13 @@ Firemission = {
     new: function() {
         return {
             name: "XX0000",
-            type: "", //ADJ, FFE, SUPPRESS, FPF
+            type: "ffe", //ADJ, FFE, SUPPRESS, FPF
             target: {
-                method: "grid",
                 methodObject: null,
-                processMethod: function(){
-                    factory = TargetMethods[this.method];
-                    this.methodObject = factory.apply(this, arguments);
+                processMethod: function(object){
+                    this.methodObject = object;
                     this.position = this.methodObject.getPosition();
+                    return this.position;
                 },
                 position: Position.new(), //this will be updated with every adjust
             },

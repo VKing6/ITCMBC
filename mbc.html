@@ -22,6 +22,9 @@
     <script src="models\Gun.js"></script>
     <script src="models\TargetMethods.js"></script>
     <script src="models\FireMission.js"></script>
+    <script src="view\handler.js"></script>
+    <script src="view\Firemission.js"></script>
+    <script src="controller\BCS.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -125,8 +128,8 @@
               <div class="col-lg-12">
                 <h1>New Firemission</h1>
                 <dl>
-                  <dt>Firemission Name: </dt>  <dd><input type="text"></dd>
-                  <dt>Firemission Type: </dt>  <dd><select>
+                  <dt>Firemission Name: </dt>  <dd><input type="text" onChange="View.helpers.updateVariable('View.Firemission.current.name', this)"></dd>
+                  <dt>Firemission Type: </dt>  <dd><select onChange="View.helpers.updateVariable('View.Firemission.current.type', this)">
                     <option value="ffe">Fire For Effect</option>
                     <option value="adj">Adjust</option>
                     <option value="suppress">Suppress</option>
@@ -140,34 +143,34 @@
                 </dl>
                 <hr>
                 <div class="row" id="methods">
-                  <div class="col-sm-8 changer grid">
+                  <div class="col-sm-8 changer grid buttonTarget" object-class="TargetMethods.Grid">
                     <dl>
                       <dt>Load Known Point: </dt><dd><select><option>KP 12</option></select><button>Load</button></dd>
-                      <dt>Grid: </dt>  <dd><input type="text"></dd>
-                      <dt>Elevation: </dt><dd><input type="number" value=0> meters</dd>
+                      <dt>Grid: </dt>  <dd><input type="text" class="variable" key="grid"></dd>
+                      <dt>Elevation: </dt><dd><input type="number" value=0 class="variable" key="elevation"> meters</dd>
                     </dl>
-                    <button class="btn btn-primary pull-right">Submit</button >
+                    <button class="btn btn-primary pull-right" onClick="View.Firemission.setMethod(this)">Next</button >
                   </div>
 
-                  <div class="col-sm-8 changer shift" hidden>
+                  <div class="col-sm-8 changer shift buttonTarget" object-class="TargetMethods.Shift" hidden>
                     <dl>
-                      <dt>Known Point: </dt><dd><select><option>FO 12</option></select></dd>
-                      <dt>OT: </dt><dd><input type="number" value=0> mils</dd>
-                      <dt>AD: </dt><dd><input type="number" value=0> meters</dd>
-                      <dt>LR: </dt><dd><input type="number" value=0> meters</dd>
-                      <dt>UD: </dt><dd><input type="number" value=0> meters</dd>
+                      <dt>Known Point: </dt><dd><select class="knownpoint" key="position"><option>FO 12</option></select></dd>
+                      <dt>OT: </dt><dd><input type="number" value=0 class="variable" key="ot"> mils</dd>
+                      <dt>AD: </dt><dd><input type="number" value=0 class="variable" key="ad"> meters</dd>
+                      <dt>LR: </dt><dd><input type="number" value=0 class="variable" key="lr"> meters</dd>
+                      <dt>UD: </dt><dd><input type="number" value=0 class="variable" key="ud"> meters</dd>
                     </dl>
-                    <button class="btn btn-primary pull-right">Submit</button >
+                    <button class="btn btn-primary pull-right" onClick="View.Firemission.setMethod(this)">Next</button >
                   </div>
 
-                  <div class="col-sm-8 changer polar" hidden>
+                  <div class="col-sm-8 changer polar buttonTarget" object-class="TargetMethods.Polar" hidden>
                     <dl>
-                      <dt>Observer: </dt><dd><select><option>FO 12</option></select></dd>
-                      <dt>Direction: </dt><dd><input type="number" value=0> mils</dd>
-                      <dt>Distance: </dt><dd><input type="number" value=0> meters</dd>
-                      <dt>VI: </dt><dd><input type="number" value=0> meters</dd>
+                      <dt>Observer: </dt><dd><select class="knownpoint" key="position"><option>FO 12</option></select></dd>
+                      <dt>Direction: </dt><dd><input type="number" value=0 class="variable" key="direction"> mils</dd>
+                      <dt>Distance: </dt><dd><input type="number" value=0 class="variable" key="distance"> meters</dd>
+                      <dt>VI: </dt><dd><input type="number" value=0 class="variable" key="vi"> meters</dd>
                     </dl>
-                    <button class="btn btn-primary pull-right">Submit</button >
+                    <button class="btn btn-primary pull-right" onClick="View.Firemission.setMethod(this)">Next</button >
                   </div>
                 </div>
               </div>
@@ -345,7 +348,7 @@
       <!-- /#page-content-wrapper -->
     </div>
     <script src="test.js"></script>
-    <script src="view\handler.js"></script>
+    <script src="controller\BCS.js"></script>
     <script>
       View.init();
     </script>

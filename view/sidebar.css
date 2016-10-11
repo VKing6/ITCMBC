@@ -42,7 +42,7 @@
 }
 
 #page-content-wrapper {
-    width: 900px;
+    max-width: 900px;
     position: absolute;
     padding: 15px;
 }

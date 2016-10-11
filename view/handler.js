@@ -18,6 +18,34 @@ View = {
         viewChanger: function(element, target) {
             $(target + " .changer").hide();
             $(target + " ." + $(element).val()).show();
+        },
+        formToModel: function(element) {
+            type = $(element).attr('object-class');
+            var types = type.split('.');
+            obj = window;
+            for (var i = 0; i < types.length; i++) {
+                obj = obj[types[i]];
+            }
+            obj = obj.new();
+            element.find('.variable').each(function() {
+                key = $(this).attr('key');
+                val = $(this).val();
+                obj[key] = val;
+            });
+            element.find('select.knownpoint').each(function() {
+                kp = BCS.knownPoints[$(this).val()];
+                key = $(this).attr('key');
+                obj[key] = kp;
+            });
+            return obj;
+        },
+        updateVariable: function(target, element) {
+            var types = target.split('.');
+            obj = window;
+            for (var i = 0; i < types.length - 1; i++) {
+                obj = obj[types[i]];
+            }
+            obj[types[types.length - 1]] = $(element).val();
         }
     }
 }
