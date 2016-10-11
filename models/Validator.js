@@ -24,7 +24,7 @@ Validator = {
                 this.valid = false;
             },
             finish: function(object) {
-                if(debug) {
+                if(debug && !this.valid) {
                     console.log(object, this.errors);
                 }
                 return this.valid;

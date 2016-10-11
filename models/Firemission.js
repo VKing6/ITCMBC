@@ -5,10 +5,11 @@ Firemission = {
             type: "", //ADJ, FFE, SUPPRESS, FPF
             target: {
                 method: "grid",
-                variables: {
-                    //variables that decide the target position go here
-                    //for example known point to shift from, and how to shift
-                    //or even the initial target grid given by the FO
+                methodObject: null,
+                processMethod: function(){
+                    factory = TargetMethods[this.method];
+                    this.methodObject = factory.apply(this, arguments);
+                    this.position = this.methodObject.getPosition();
                 },
                 position: Position.new(), //this will be updated with every adjust
             },

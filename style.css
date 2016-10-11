@@ -1,19 +1,37 @@
-#mapdiv {
-    overflow: scroll;
+dl{
     width:100%;
-    height:800px;
+  overflow: hidden;
+  padding: 0;
+  margin: 0
 }
 
-#wrapper {
-    width:100%;
-    height:100%;
-    position: relative;
+dl dt{
+  float: left;
+  width: 150px;
+  height:26px;
+  /* adjust the width; make sure the total of both is 100% */
+  padding: 0;
+  margin: 0;
+  text-align: right;
+}
+dl dd{
+  float: left;
+  width: 66%;
+  height:26px;
+  /* adjust the width; make sure the total of both is 100% */
+  padding: 0;
+  margin: 0
 }
 
-#mapdiv canvas{
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
+dd select {
+  width:174px;
+  height:100%;
+}
+
+select{
+    height:26px;
+}
+
+input.narrow {
+    width:80px;
 }

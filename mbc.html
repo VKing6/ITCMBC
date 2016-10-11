@@ -12,6 +12,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="view/sidebar.css">
+    <link rel="stylesheet" href="style.css">
     <script src="calculate.js"></script>
     <script src="models\Validator.js"></script>
     <script src="models\Position.js"></script>
@@ -29,8 +31,323 @@
     <![endif]-->
   </head>
   <body>
+    <div id="wrapper">
+      <!-- Sidebar -->
+      <div id="sidebar-wrapper">
+          <ul class="sidebar-nav">
+              <li class="sidebar-brand">
+                  <h1>FDC</h1>
+                  <h4>Archer Bty</h4>
+              </li>
+              <li>
+                  <a onClick="View.open('bcs_options')">BCS Settings</a>
+              </li>
+              <li>
+                  <a onClick="View.open('bty_setup')">Bty Setup</a>
+              </li>
+              <li>
+                  <a>Location Stores</a>
+              </li>
+              <li>
+                  <a>Ammo Stores</a>
+              </li>
+              <li><a onClick="View.open('firemission_new')"><h3>New Firemission</h3></a></li>
+              <li><a onClick="View.open('firemission_engagement')">DEBUG:Engagement</a></li>
+              <li><a onClick="View.open('firemission_solution')">DEBUG:Solution</a></li>
+              <li><a onClick="View.open('firemission_adjust')">DEBUG:Adjust</a></li>
+              <li><a onClick="View.open('firemission_eom')">DEBUG:EOM</a></li>
+            </ul>
+      </div>
+      <!-- /#sidebar-wrapper -->
+      <!-- Page Content -->
+      <div id="page-content-wrapper">
+        <div class="container-fluid" id="content">
+            <div class="row page" id="landing">
+              <div class="col-lg-12">
+                  <h1>Archer BCS</h1>
+              </div>
+            </div>
 
-  <script src="http://www.w3schools.com/lib/w3data.js"></script>
+            <!--                          BCS SETUP                     -->
+            <div class="row page" id="bcs_options" hidden>
+                <div class="col-md-8">
+                  <h1>BCS Settings</h1>
+                  <p>
+                    <dl>
+                      <dt>Alert To Splash: </dt>  <dd><input type="number" value=10> seconds</dd>
+                      <dt>Wind Resistance: </dt>  <dd>
+                        <select>
+                          <option value="">On</option>
+                          <option value="_NWR">Off</option>
+                        </select>
+                      </dd>
+                      <dt>Firemission Code: </dt> <dd><input type="text" placeholder="time" value="FM"></dd>
+                      <dt>Firemission Start: </dt><dd> <input type="number" placeholder="time" value="0001"> </dd>
+                    </dl>
+                  </p>
+                </div>
+                <div class="col-md-7 btn-toolbar">
+                    <button class="btn btn-primary pull-right">Save</button >
+                    <button class="btn btn-danger pull-right">Discard</button >
+                </div>
+            </div>
 
+            <!--                          BATTERY SETUP                     -->
+            <div class="row page" id="bty_setup" hidden>
+                <div class="col-lg-12">
+                  <h1>Battery Setup</h1>
+                  <p>
+                    <dl>
+                      <dt>Battery Callsign: </dt>  <dd><input type="text"></dd>
+                    </dl>
+                    <table class="table">
+                      <thead>
+                        <tr><th>Gun #</th><th>Position</th><th>Elevation</th><th>Type</th><th><button class="btn btn-xs btn-primary"><i class="fa fa-plus"></i></button></th></tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><input type="text" value="" class="narrow"></td>
+                          <td><input type="text" value=""></td>
+                          <td><input type="text" value=""></td>
+                          <td><select>
+                            <option value="mortar_82">Mk6</option>
+                          </select></td>
+                          <td><button class="btn btn-xs btn-danger"><i class="fa fa-minus"></i></button></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </p>
+                </div>
+            </div>
+
+            <!--                          BATTERY SETUP                     -->
+            <div class="row page" id="firemission_new" hidden>
+              <div class="col-lg-12">
+                <h1>New Firemission</h1>
+                <dl>
+                  <dt>Firemission Name: </dt>  <dd><input type="text"></dd>
+                  <dt>Firemission Type: </dt>  <dd><select>
+                    <option value="ffe">Fire For Effect</option>
+                    <option value="adj">Adjust</option>
+                    <option value="suppress">Suppress</option>
+                    <option value="fpf">FPF</option>
+                  </select></dd>
+                  <dt>Target Type: </dt>  <dd><select value="grid" onChange="View.helpers.viewChanger(this, '#methods')">
+                    <option value="grid">Grid</option>
+                    <option value="shift">Shift</option>
+                    <option value="polar">Polar</option>
+                  </select></dd>
+                </dl>
+                <hr>
+                <div class="row" id="methods">
+                  <div class="col-sm-8 changer grid">
+                    <dl>
+                      <dt>Load Known Point: </dt><dd><select><option>KP 12</option></select><button>Load</button></dd>
+                      <dt>Grid: </dt>  <dd><input type="text"></dd>
+                      <dt>Elevation: </dt><dd><input type="number" value=0> meters</dd>
+                    </dl>
+                    <button class="btn btn-primary pull-right">Submit</button >
+                  </div>
+
+                  <div class="col-sm-8 changer shift" hidden>
+                    <dl>
+                      <dt>Known Point: </dt><dd><select><option>FO 12</option></select></dd>
+                      <dt>OT: </dt><dd><input type="number" value=0> mils</dd>
+                      <dt>AD: </dt><dd><input type="number" value=0> meters</dd>
+                      <dt>LR: </dt><dd><input type="number" value=0> meters</dd>
+                      <dt>UD: </dt><dd><input type="number" value=0> meters</dd>
+                    </dl>
+                    <button class="btn btn-primary pull-right">Submit</button >
+                  </div>
+
+                  <div class="col-sm-8 changer polar" hidden>
+                    <dl>
+                      <dt>Observer: </dt><dd><select><option>FO 12</option></select></dd>
+                      <dt>Direction: </dt><dd><input type="number" value=0> mils</dd>
+                      <dt>Distance: </dt><dd><input type="number" value=0> meters</dd>
+                      <dt>VI: </dt><dd><input type="number" value=0> meters</dd>
+                    </dl>
+                    <button class="btn btn-primary pull-right">Submit</button >
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="row page" id="firemission_engagement" hidden>
+              <div class="col-lg-7">
+                <h1>XX0000 Engagement</h1>
+                <hr>
+                <dl>
+                  <dt>MOC: </dt><dd><select><option>AMC</option></select></dd>
+                  <dt>Charge: </dt><dd><select><option>Auto</option></select></dd>
+                </dl>
+                <hr>
+
+                <h3>Adjust</h3>
+                <select><option>Gun 1</option></select>
+                <select><option>HE</option></select>
+                <select><option>Quick</option></select>
+
+                <h3>Fire For Effect</h3>
+                <select><option>Battery</option></select>
+                <input type="number" class="narrow" value=0> Rounds 
+                <select><option>HE</option></select>
+                <select><option>Quick</option></select>
+                <hr>
+
+                <dl>
+                  <dt>Sheaf: </dt><dd><select><option>Parallel</option></select></dd>
+                  <dt>Sweeps/Zones: </dt><dd><select><option>Off</option></select></dd>
+                </dl>
+              </div>
+              <div class="col-sm-7">
+                <button class="btn btn-primary pull-right">Solutions</button >
+              </div>
+            </div>
+
+            <div class="row page" id="firemission_solution" hidden>
+              <div class="col-lg-7">
+                <h1>XX0000 Solutions</h1>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Gun #</th>
+                      <th>MOF</th>
+                      <th>MOC</th>
+                      <th>Rounds</th>
+                      <th>Shell</th>
+                      <th>Fuze</th>
+                      <th>Charge</th>
+                      <th>QD</th>
+                      <th>AZ</th>
+                      <th>TOF</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>ADJ</td>
+                      <td>AMC</td>
+                      <td>1</td>
+                      <td>HE</td>
+                      <td>Quick</td>
+                      <td>Ch 3</td>
+                      <td>6300</td>
+                      <td>1138</td>
+                      <td>34.7</td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>FFE</td>
+                      <td>DNL</td>
+                      <td>3</td>
+                      <td>HE</td>
+                      <td>Quick</td>
+                      <td>Ch 3</td>
+                      <td>6300</td>
+                      <td>1138</td>
+                      <td>34.7</td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td>FFE</td>
+                      <td>DNL</td>
+                      <td>3</td>
+                      <td>HE</td>
+                      <td>Quick</td>
+                      <td>Ch 3</td>
+                      <td>6300</td>
+                      <td>1138</td>
+                      <td>34.7</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <button class="btn btn-danger btn-block">WARNING: DANGER CLOSE BP3, OP4</button><br/>
+                <button class="btn btn-primary">Send datalink orders</button>
+                <hr>
+                <div class="row">
+                  <div class="col-md-4">
+                    <button class="btn btn-primary btn-block">Shot</button><br/>
+                    1.23 Seconds<br/>
+                    <button class="btn btn-success btn-block">SPLASH T-10</button>
+                  </div>
+                  <div class="col-md-4">
+                    <button class="btn btn-primary btn-block">Rounds Complete</button><br/>
+                    12.34 Seconds<br/>
+                  </div>
+                  <div class="col-md-4">
+                    <button class="btn btn-danger btn-block">Shot</button><br/>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-md-2"></div>
+                  <div class="col-md-4">
+                    <button class="btn btn-primary btn-block">Adjust</button>
+                  </div>
+                  <div class="col-md-4">
+                    <button class="btn btn-primary btn-block">End Mission</button>
+                  </div>
+                  <div class="col-md-2"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row page" id="firemission_adjust" hidden>
+              <div class="col-md-8">
+                <h1>XX0000 Adjust</h1>
+                <dl>
+                  <dt>OT: </dt><dd><input type="number" value=0> mils</dd>
+                  <dt>AD: </dt><dd><input type="number" value=0> meters</dd>
+                  <dt>LR: </dt><dd><input type="number" value=0> meters</dd>
+                  <dt>UD: </dt><dd><input type="number" value=0> meters</dd>
+                </dl>
+                <br/>
+                <dl>
+                  <dt>MOF: </dt><dd>
+                    <select><option>ADJ</option><option>FFE</option></select>
+                  </dd>
+                </dl>
+                <br/>
+                  <button class="btn btn-primary pull-right">Submit Adjustment</button><br/>
+              </div>
+            </div>
+
+            <div class="row page" id="firemission_eom" hidden>
+              <div class="col-md-4">
+                <h1>XX0000 EOM</h1>
+                <h4>EOM Action</h4>
+                <select><option>Record as Target</option><option>No Save</option></select>
+
+                 <table class="table">
+                  <thead>
+                    <tr><th>Gun #</th><th>Rounds</th><th>Type</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td><input type="number" value=2></td>
+                      <td><select><option>HE</option></select></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="btn-toolbar">
+                    <button class="btn btn-danger">Cancel</button >
+                    <button class="btn btn-primary">Save</button >
+                </div>
+              </div>
+            </div>
+          <!-- content end -->
+          </div>
+        </div>
+      </div>
+      <!-- /#page-content-wrapper -->
+    </div>
+    <script src="test.js"></script>
+    <script src="view\handler.js"></script>
+    <script>
+      View.init();
+    </script>
   </body>
 </html>

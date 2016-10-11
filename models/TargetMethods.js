@@ -20,7 +20,7 @@ TargetMethods = {
         return TargetMethods.generic({position: position, direction:direction, distance: distance, vi:vi}, function() {
             return adjustGridToGrid(position, direction, distance, 0, vi);
         });
-    }
+    },
     shift: function(position, ot, ad, lr, ud) {
         return TargetMethods.generic({position: position, ot:ot, ad:ad, lr:lr, ud:ud}, function() {
             return adjustGridToGrid(position, ot, ad, lr, ud);
