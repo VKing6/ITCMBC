@@ -1,36 +1,46 @@
-var ss = SpreadsheetApp.getActiveSpreadsheet();
-var tableSheet = ss.getSheetByName('Tables');
-var targetSheet = ss.getSheetByName('Stores');
-
+adjusting = false;
 function process() {
-    clearSolution();
+    //clearSolution();
+    calculateController.clearCanvas();
+    calculateController.clearResults();
     var baseEndPos = calculateController.getTarget();
     calculateController.adjust.setResultPos(baseEndPos);
-    processBty(baseEndPos, true);
+    var ret = processBty(baseEndPos, true);
+    addLog(ret);
+    isDangerClose(baseEndPos);
+    calculateController.updateAdjust(getCellValue('B5'), true);
 }
 
 function processBty(baseEndPos, print) {
+    calculateController.setMapFocus(baseEndPos);
     var ret = [];
     var sheaf = calculateController.sheaf
-    var sheafWidthMod = sheaf.getlength() / 2;
-    var basePiece = calculateController.guns[1];
-    if (sheaf.getType() != 'Special' && sheaf.isQuick == 'On') {
-        sheafDir = (calcDirection(basePiece.getPos, baseEndPos) + 1600) % 6400;
+    var sheafWidthMod = sheaf.getLength() / 2;
+    sheafDir = sheaf.getDir();
+    if (sheaf.getType() != 'special' && sheaf.getQuick() == 'true') {
+        sheafDir = calcDirection(calculateController.getBatteryPos().mgrs, baseEndPos.mgrs) / 360 * 6400;
     }
+    console.log(calculateController.guns);
     for (var i = 0; i < calculateController.guns.length; i++) {
         var endPos = baseEndPos;
         var gun = calculateController.guns[i];
-        var gunPos = calculateController.guns[i].getPos;
-        if (sheaf.getType() == 'Parallel') {
-            gunPos = basePiece.getPos();
-        } else if (sheaf == 'Special') {
-            Logger.log(sheafWidthMod * (i-1));
-            endPos.mgrs = adjustGridToGrid(endPos.mgrs, 0, sheafDir, sheafWidthMod * (i-1), 0, 0).coords;
-        } else if (sheaf == 'Linear') {
-            endPos.mgrs = adjustGridToGrid(endPos.mgrs, 0, sheafDir, 40 * (i-1), 0, 0).coords;
-        } else if (sheaf == 'Open') {
-            endPos.mgrs = adjustGridToGrid(endPos.mgrs, 0, sheafDir, 60 * (i-1), 0, 0).coords;
+        var gunPos = calculateController.guns[i].getPos();
+        if (sheaf.getType() == 'parallel') {
+            gunPos = calculateController.getBatteryPos();
+        } else if (sheaf.getType() == 'special') {
+            var guns = calculateController.guns.length;
+            WidthPerGun = sheaf.getLength() / guns;
+            var halfSheaf = sheaf.getLength() / 2;
+            offset = (i+1) * WidthPerGun - (WidthPerGun / 2) - halfSheaf;
+            console.log(offset);
+            //offset = (calculateController.guns.length % 2 == 0) ? sheafWidthMod * (i-1) -0.5 : sheafWidthMod * (i-1) ;
+            endPos = adjustGridToGrid(endPos, sheafDir, 0, offset, 0, 0);
+        } else if (sheaf.getType() == 'linear') {
+            endPos = adjustGridToGrid(endPos, sheafDir, 0, 40 * (i-1), 0, 0);
+        } else if (sheaf.getType() == 'open') {
+            endPos = adjustGridToGrid(endPos, sheafDir, 0, 60 * (i-1), 0, 0);
         } // else it's converged sheaf
+        calculateController.drawCross(gunPos, 'multiply');
         var res = getSolutions(gunPos, endPos);
         ret[i] = res;
         if(print) {
@@ -40,12 +50,35 @@ function processBty(baseEndPos, print) {
     return ret;
 }
 
-function startSweepZone() {
-    clearSweep();
-    var shifts = setSweepZone();
+function startSweepZone(start, end, shape) {
+    calculateController.clearResults();
+    calculateController.clearCanvas();
+    var shifts = setSweepZone(start, end, shape);
     calculateController.sweepZone.setDistance(shifts.targetLength);
     for(var i = 0; i < shifts.solutions.length; i++)
-        calculateController.guns[i].setSweepZoneResults(shifts.solutions[i]);
+    {
+        calculateController.guns[i].setSweepZoneResults(shifts.base[i], shifts.solutions[i]);
+    }
+    addLog(shifts, true);
+    isDangerClose(end);
+}
+
+function isDangerClose(target) {
+    dangerCloseHide();
+    var keys = Object.keys(pointStores);
+    noDanger = true;
+    for (var i = keys.length - 1; i >= 0; i--) {
+        point = pointStores[keys[i]];
+        if(point.friendly == "true") {
+            console.log('checking', dist, target, point);
+            var dist = calcDistance(target.mgrs, point.position.mgrs);
+            console.log(dist);
+            if(dist < 600) {
+                dangerClose(keys[i]);
+                noDanger = false;
+            }
+        }
+    }
 }
 
 /*==============================================================================================================*/
@@ -64,7 +97,7 @@ function calcDirection(start, end) {
     else if(start.easting > end.easting)
         return 180 + angle;
     else if(start.northing > end.northing)
-        return 90 + angle;
+        return 180- angle;
     else
         return angle;
 }
@@ -79,75 +112,92 @@ function getDiff(i, j) {
     return Math.abs(i - j);
 }
 
+function calcAverage(positions) {
+    totalEast = 0;
+    totalNorth = 0;
+    totalElev = 0;
+    for (var i = positions.length - 1; i >= 0; i--) {
+        var pos = positions[i];
+        Math.floor(totalEast += parseInt(pos.mgrs.easting));
+        Math.floor(totalNorth += parseInt(pos.mgrs.northing));
+        Math.floor(totalElev += parseInt(pos.elev));
+    }
+    var total = positions.length;
+    totalEast = Math.floor(totalEast / total);
+    totalNorth = Math.floor(totalNorth / total);
+    console.log(toFiveDigit(totalEast, true));
+    return toPos(toFiveDigit(totalEast, true) + '' + toFiveDigit(totalNorth,true), Math.floor(totalElev / total));
+}
+
 /*==============================================================================================================*/
 
 function getSolutions(startPos, endPos) {
     var distance = calcDistance(startPos.mgrs, endPos.mgrs);
     var azimuth = calcDirection(startPos.mgrs, endPos.mgrs);
     var solutions = calcQuadrants(distance, endPos.elev - startPos.elev);
-    return {'azimuth' : azimuth / 360 * 6400, 'distance' : distance, 'quadrants' : solutions};
+    calculateController.drawCross(endPos, 'add');
+    return {'azimuth' : azimuth / 360 * 6400, 'distance' : distance, 'quadrants' : solutions ,start: startPos, end: endPos};
 }
 
 function calcQuadrants(distance, elevDiff) {
-    var ch0 = QuadrantFromRange(tableSheet.getRange('B3:M10'), distance, elevDiff);
-    var ch1 = QuadrantFromRange(tableSheet.getRange('B13:M37'), distance, elevDiff);
-    var ch2 = QuadrantFromRange(tableSheet.getRange('B40:M97'), distance, elevDiff);
+    var charges = mortarTable.mortar_82.charges;
     var res = [];
-    if(ch0 != null)
-     res[0] = {'qd' : ch0.qd, 'tof' : ch0.tof};
-    else
-     res[0] = {'qd' : null, 'tof' : null};
-    if(ch1 != null)
-     res[1] = {'qd' : ch1.qd, 'tof' : ch1.tof};
-    else
-     res[1] = {'qd' : null, 'tof' : null};
-    if(ch2 != null)
-     res[2] = {'qd' : ch2.qd, 'tof' : ch2.tof};
-    else
-     res[2] = {'qd' : null, 'tof' : null};
+    for (var i = charges.length - 1; i >= 0; i--) {
+        var charge = charges[i];
+        console.log(calculateController.options.getRangeTable());
+        res[i] = QuadrantFromRange(mortarTable[calculateController.options.getRangeTable()][charge], distance, elevDiff);
+    }
     return res;
 }
 
-function QuadrantFromRange(tableCols, distance, elevDiff) {
-    for (var i = 1; i < tableCols.getHeight() - 1; i++) {
-        var low = tableCols.getCell(i,1).getValue();
-        var high = tableCols.getCell(i + 1,1).getValue();
-        if (distance >= low && distance <= high) {
-            var substep = high - distance;
-            var difference = high - low;
-            var lowqd = tableCols.getCell(i, 2).getValue();
-            var highqd = tableCols.getCell(i + 1, 2).getValue();
+function QuadrantFromRange(table, distance, elevDiff) {
+    var low = Math.floor(distance / 50) * 50;
+    var high = low + 50;
+    if(table[low] != null && table[high] != null)
+    {
+        var substep = high - distance;
+        var difference = high - low;
+        var lowqd = table[low].qd;
+        var highqd = table[high].qd;
 
-            var diffqd = lowqd - highqd;
-            var subqd = diffqd / difference * substep;
-            var qd = Math.round(highqd + subqd);
+        var diffqd = lowqd - highqd;
+        var subqd = diffqd / difference * substep;
+        var qd = Math.round(highqd + subqd);
 
-            var lowElev = tableCols.getCell(i, 3).getValue();
-            var highElev = tableCols.getCell(i +1, 3).getValue();
-            var subElev = highElev + (lowElev - highElev) / difference * substep;
-            var adjElev = subElev * (elevDiff / 100)    * -1;
-            qd = qd + adjElev;
-
-            return {'qd' : Math.round(qd), 'tof' : tableCols.getCell(i, 5).getValue()};
-        }
-    }
+        var lowElev = table[low].dqd;
+        var highElev = table[high].dqd;
+        var subElev = highElev + (lowElev - highElev) / difference * substep;
+        var adjElev = subElev * (elevDiff / 100)    * -1;
+        qd = qd + adjElev;
+        console.log('qd', elevDiff);
+        return {'qd' : Math.round(qd), 'tof' : table[low].tof};
+    }else{
+        return {'qd' : null, 'tof' : null};
+    }            
 }
 
 /*==============================================================================================================*/
 
-function setSweepZone() {
+function setSweepZone(start, end, shape) {
     var result = {
         solutions: [],
+        base: [],
         error: ''
     };
     var sweepzone = calculateController.sweepZone;
-    var targetStartPos = calculateController.adjust.getResultPos();
+    var targetStartPos = (start != null) ? start : calculateController.adjust.getResultPos();
     var startSolution = processBty(targetStartPos, false);
-
+    var startSheaf = calculateController.sheaf.toJSON();
+    if(calculateController.sweepZone.getSheaf() && !shape) {
+        calculateController.sheaf.setType('special');
+        calculateController.sheaf.setDir(calculateController.sweepZone.getSheafDir());
+        calculateController.sheaf.setLength(calculateController.sweepZone.getSheafLength());
+    }
     var charge = sweepzone.getCharge();
     var shifts = sweepzone.getShifts();
-    var targetEndPos = sweepzone.getTarget();
+    var targetEndPos = (end != null) ? end : sweepzone.getTarget();
     var endSolution = processBty(targetEndPos, false);
+    calculateController.sheaf.fromJSON(startSheaf);
     var targetLength = calcDistance(targetStartPos.mgrs, targetEndPos.mgrs);
     result.targetLength = targetLength;
 
@@ -160,8 +210,10 @@ function setSweepZone() {
         var startAzimuth = startSolution[i].azimuth;
         var azimuth = endSolution[i].azimuth;
 
+        calculateController.drawLine(startSolution[i].end, endSolution[i].end);
         var sweep = (azimuth - startAzimuth) / shifts;
         var zone = (quadrant - startQuadrant) / shifts;
+        result['base'][i] = startSolution[i];
         result['solutions'][i] = {'baseaz' : Math.round(startAzimuth), 'baseqd' : startQuadrant, 'sweep' : Math.round(sweep), 'zone' : zone, 'shifts' : shifts};
     }
     return result;
@@ -170,13 +222,21 @@ function setSweepZone() {
 /*=========================================adjust===============================================================*/
 
 function adjust() {
+    adjusting = true;
+    calculateController.clearResults();
     var adjust = calculateController.adjust;
     var res = adjustGridToGrid(adjust.getResultPos(), adjust.getOT(), adjust.getAD(), adjust.getLR(), adjust.getUD());
     adjust.setResultPos(res);
-    processBty(res, res.elev, true);
+    calculateController.setTarget(res);
+    console.log(res);
+    var sl = processBty(res, true);
+    isDangerClose(res);
+    calculateController.updateAdjust(getCellValue('B5'));
+    adjusting = false;
 }
 
 function adjustGridToGrid(pos, ot, ad, lr, ud) {
+    console.log('ud', ud);
     var de = deltaEasting(ot, ad, lr);
     var dn = deltaNorthing(ot, ad, lr);
 
