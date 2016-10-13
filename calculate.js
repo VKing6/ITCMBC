@@ -228,3 +228,16 @@ function isInRange(target, positions, distance) {
         }
     }
 }
+
+function pad(base, length, before) {
+    base = base + '';
+    if (base.length < length) {
+        for (var i = base.length; i < length; i++) {
+            if (before)
+                base = '0' + base;
+            else
+                base = base + '0';
+        }
+    }
+    return base;
+}

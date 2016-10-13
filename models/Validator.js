@@ -6,6 +6,7 @@ Validator = {
             this.valid = true;
             },
             validate: function(object) {
+                if(object == null) return this.finishEmpty();
                 this.init();
                 this.rules(object);
                 return this.finish(object);
@@ -20,8 +21,12 @@ Validator = {
             },
             rules: rulesClosure,
             handleError: function(error) {
-                this.errors = this.errors + error + ' ';
+                this.errors = this.errors + error + ', ';
                 this.valid = false;
+            },
+            finishEmpty: function() { 
+                this.errors = "object does not exist";
+                return false;
             },
             finish: function(object) {
                 if(debug && !this.valid) {

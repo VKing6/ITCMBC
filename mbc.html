@@ -23,7 +23,8 @@
     <script src="models\TargetMethods.js"></script>
     <script src="models\FireMission.js"></script>
     <script src="view\handler.js"></script>
-    <script src="view\Firemission.js"></script>
+    <script src="controller\Route.js"></script>
+    <script src="controller\Firemission.js"></script>
     <script src="controller\BCS.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -43,10 +44,10 @@
                   <h4>Archer Bty</h4>
               </li>
               <li>
-                  <a onClick="View.open('bcs_options')">BCS Settings</a>
+                  <a onClick="Get('BCS.options')">BCS Settings</a>
               </li>
               <li>
-                  <a onClick="View.open('bty_setup')">Bty Setup</a>
+                  <a onClick="Get('BCS.bty')">Bty Setup</a>
               </li>
               <li>
                   <a>Location Stores</a>
@@ -54,11 +55,7 @@
               <li>
                   <a>Ammo Stores</a>
               </li>
-              <li><a onClick="View.open('firemission_new')"><h3>New Firemission</h3></a></li>
-              <li><a onClick="View.open('firemission_engagement')">DEBUG:Engagement</a></li>
-              <li><a onClick="View.open('firemission_solution')">DEBUG:Solution</a></li>
-              <li><a onClick="View.open('firemission_adjust')">DEBUG:Adjust</a></li>
-              <li><a onClick="View.open('firemission_eom')">DEBUG:EOM</a></li>
+              <li><a onClick="Get('Firemission.new')"><h3>New Firemission</h3></a></li>
             </ul>
       </div>
       <!-- /#sidebar-wrapper -->
@@ -72,31 +69,31 @@
             </div>
 
             <!--                          BCS SETUP                     -->
-            <div class="row page" id="bcs_options" hidden>
+            <div class="row page object" id="bcs_options" hidden>
                 <div class="col-md-8">
                   <h1>BCS Settings</h1>
                   <p>
                     <dl>
-                      <dt>Alert To Splash: </dt>  <dd><input type="number" value=10> seconds</dd>
+                      <dt>Alert To Splash: </dt>  <dd><input type="number" value=10 class="variable" key="alertToSplash"> seconds</dd>
                       <dt>Wind Resistance: </dt>  <dd>
-                        <select>
+                        <select class="variable" key="windResistance">
                           <option value="">On</option>
                           <option value="_NWR">Off</option>
                         </select>
                       </dd>
-                      <dt>Firemission Code: </dt> <dd><input type="text" placeholder="time" value="FM"></dd>
-                      <dt>Firemission Start: </dt><dd> <input type="number" placeholder="time" value="0001"> </dd>
+                      <dt>Firemission Code: </dt> <dd><input type="text" placeholder="time" value="FM" class="variable" key="firemissionCode"></dd>
+                      <dt>Firemission Start: </dt><dd> <input type="number" placeholder="time" value="0001" class="variable" key="firemissionStart"> </dd>
                     </dl>
                   </p>
                 </div>
                 <div class="col-md-7 btn-toolbar">
-                    <button class="btn btn-primary pull-right">Save</button >
-                    <button class="btn btn-danger pull-right">Discard</button >
+                    <button class="btn btn-primary pull-right" onClick="Post('BCS.options', this)">Save</button >
+                    <button class="btn btn-danger pull-right" onClick="Get('BCS.options')">Discard</button >
                 </div>
             </div>
 
             <!--                          BATTERY SETUP                     -->
-            <div class="row page" id="bty_setup" hidden>
+            <div class="row page object" id="bty_setup" hidden>
                 <div class="col-lg-12">
                   <h1>Battery Setup</h1>
                   <p>
@@ -124,35 +121,37 @@
             </div>
 
             <!--                          BATTERY SETUP                     -->
-            <div class="row page" id="firemission_new" hidden>
+            <div class="row page object" id="firemission_new" hidden>
+              <input type="hidden" class="variable" key="id">
               <div class="col-lg-12">
                 <h1>New Firemission</h1>
+                <p class="bg-danger"><span class="flash"></span></p>
                 <dl>
-                  <dt>Firemission Name: </dt>  <dd><input type="text" onChange="View.helpers.updateVariable('View.Firemission.current.name', this)"></dd>
-                  <dt>Firemission Type: </dt>  <dd><select onChange="View.helpers.updateVariable('View.Firemission.current.type', this)">
+                  <dt>Firemission Name: </dt>  <dd><input type="text" class="variable" key="name"></dd>
+                  <dt>Firemission Type: </dt>  <dd><select class="variable" key="type">
                     <option value="ffe">Fire For Effect</option>
                     <option value="adj">Adjust</option>
                     <option value="suppress">Suppress</option>
                     <option value="fpf">FPF</option>
                   </select></dd>
-                  <dt>Target Type: </dt>  <dd><select value="grid" onChange="View.helpers.viewChanger(this, '#methods')">
+                  <dt>Target Type: </dt>  <dd><select value="grid" class="variable" key="targetMethod" onChange="View.helpers.viewChanger(this, '#methods')">
                     <option value="grid">Grid</option>
                     <option value="shift">Shift</option>
                     <option value="polar">Polar</option>
                   </select></dd>
                 </dl>
                 <hr>
-                <div class="row" id="methods">
-                  <div class="col-sm-8 changer grid buttonTarget" object-class="TargetMethods.Grid">
+                <div class="row changer-list" id="methods">
+                  <div class="col-sm-8 changer grid buttonTarget targetMethods object-nested" object-class="TargetMethods.Grid">
                     <dl>
-                      <dt>Load Known Point: </dt><dd><select><option>KP 12</option></select><button>Load</button></dd>
+                      <dt>Load Known Point: </dt><dd><select><option>FO 12</option></select><button>Load</button></dd>
                       <dt>Grid: </dt>  <dd><input type="text" class="variable" key="grid"></dd>
                       <dt>Elevation: </dt><dd><input type="number" value=0 class="variable" key="elevation"> meters</dd>
                     </dl>
-                    <button class="btn btn-primary pull-right" onClick="View.Firemission.setMethod(this)">Next</button >
+                    <button class="btn btn-primary pull-right" onClick="Post('Firemission.new', this)">Next</button >
                   </div>
 
-                  <div class="col-sm-8 changer shift buttonTarget" object-class="TargetMethods.Shift" hidden>
+                  <div class="col-sm-8 changer shift buttonTarget targetMethods  object-nested" object-class="TargetMethods.Shift" hidden>
                     <dl>
                       <dt>Known Point: </dt><dd><select class="knownpoint" key="position"><option>FO 12</option></select></dd>
                       <dt>OT: </dt><dd><input type="number" value=0 class="variable" key="ot"> mils</dd>
@@ -160,17 +159,17 @@
                       <dt>LR: </dt><dd><input type="number" value=0 class="variable" key="lr"> meters</dd>
                       <dt>UD: </dt><dd><input type="number" value=0 class="variable" key="ud"> meters</dd>
                     </dl>
-                    <button class="btn btn-primary pull-right" onClick="View.Firemission.setMethod(this)">Next</button >
+                    <button class="btn btn-primary pull-right" onClick="Post('Firemission.new', this)">Next</button >
                   </div>
 
-                  <div class="col-sm-8 changer polar buttonTarget" object-class="TargetMethods.Polar" hidden>
+                  <div class="col-sm-8 changer polar buttonTarget targetMethods  object-nested" object-class="TargetMethods.Polar" hidden>
                     <dl>
                       <dt>Observer: </dt><dd><select class="knownpoint" key="position"><option>FO 12</option></select></dd>
                       <dt>Direction: </dt><dd><input type="number" value=0 class="variable" key="direction"> mils</dd>
                       <dt>Distance: </dt><dd><input type="number" value=0 class="variable" key="distance"> meters</dd>
                       <dt>VI: </dt><dd><input type="number" value=0 class="variable" key="vi"> meters</dd>
                     </dl>
-                    <button class="btn btn-primary pull-right" onClick="View.Firemission.setMethod(this)">Next</button >
+                    <button class="btn btn-primary pull-right" onClick="Post('Firemission.new', this)">Next</button >
                   </div>
                 </div>
               </div>
@@ -179,11 +178,11 @@
 
             <div class="row page" id="firemission_engagement" hidden>
               <div class="col-lg-7">
-                <h1>XX0000 Engagement</h1>
+                <h1><span class="variable" key="name"></span> Engagement</h1>
                 <hr>
                 <dl>
-                  <dt>MOC: </dt><dd><select><option>AMC</option></select></dd>
-                  <dt>Charge: </dt><dd><select><option>Auto</option></select></dd>
+                  <dt>MOC: </dt><dd><select class="variable" key="engagement.moc"><option value="AMC">AMC</option><option>DNL</option value="DNL"><option value="WR">WR</option></select></dd>
+                  <dt>Charge: </dt><dd><select class="variable" key="engagement.charge"><option>Auto</option></select></dd>
                 </dl>
                 <hr>
 

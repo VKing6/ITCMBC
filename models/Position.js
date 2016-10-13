@@ -37,6 +37,10 @@ Position = {
         return base;
     },
     validator: Validator.new(function(object){
+        this.handleErrorBool((object.mgrs.easting == ""), " Easting is empty");
+        this.handleErrorBool((object.mgrs.northing == ""), " Northing is empty");
+        this.handleErrorBool((object.mgrs_string == ""), " Mgrs is empty");
+        this.handleErrorBool((object.elev == ""), " Elevation is empty");
         this.checkNaN(object.mgrs.easting, 'easting');
         this.checkNaN(object.mgrs.northing, 'northing');
         this.checkNaN(object.mgrs_string, 'mgrs_string');
