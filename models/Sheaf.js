@@ -2,7 +2,7 @@ Sheaf = {
     new: function() {
         return {
             type: "parallel",
-            quick: true,
+            quick: "true",
             direction: 0,
             length: 0
         }

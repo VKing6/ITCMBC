@@ -2,7 +2,6 @@ View = {
     open:function(id, object) {
         //window.location.hash = '#open=' + id; //THIS NEEDS TO BE CHANGED
         $('.flash').html('');
-        console.log(id, object);
         $('#content .page').hide();
         this.populate($('#'+id), object);
         $('#content #' + id).show();
@@ -36,10 +35,12 @@ View = {
             key = $(this).attr('key');
             val = window.objectFinder(object, key);
             if(val != null) {
-                console.log(key, val);
                 $(this).val(val);
                 if($(this).is("span")) $(this).html(val);
             }
+        });
+        element.find('.variable').not('.targetMethods.variable').each(function() {
+
         });
     },
     helpers: {
@@ -66,13 +67,15 @@ View = {
             element.find('.variable').not(selector).each(function() {
                 key = $(this).attr('key');
                 val = $(this).val();
-                obj[key] = val;
+                nestedPut(obj, key, val);
+                //obj[key] = val;
             });
             element.find('select.knownpoint').each(function() {
                 kp = BCS.knownPoints[$(this).val()];
                 key = $(this).attr('key');
                 obj[key] = kp;
             });
+            console.log(obj);
             return obj;
         },
         updateVariable: function(target, element) {
@@ -90,7 +93,35 @@ function objectFinder(start, path) {
     var routes = path.split('.');
     obj = start;
     for (var i = 0; i < routes.length; i++) {
-        obj = obj[routes[i]];
+        if(obj != null)
+        {
+            obj = obj[routes[i]];
+        }else {
+            return null;
+        }
     }
     return obj;
+}
+
+function nestedPut(object, key, value) {
+    if(!key.includes('.')) {
+        object[key] = value;
+        return;
+    }
+    var routes = key.split('.');
+    current = object;
+    subKey = null;
+    for (var i = 0; i < routes.length; i++) {
+        subKey = routes[i];
+        console.log(i, routes.length);
+        if(i < routes.length - 1)
+        {
+            if(current[subKey] == null) {
+                current[subKey] = {};
+            }
+            current = current[subKey];
+        }else {
+            current[subKey] = value;
+        }
+    }
 }

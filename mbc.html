@@ -38,25 +38,30 @@
     <div id="wrapper">
       <!-- Sidebar -->
       <div id="sidebar-wrapper">
-          <ul class="sidebar-nav">
-              <li class="sidebar-brand">
-                  <h1>FDC</h1>
-                  <h4>Archer Bty</h4>
-              </li>
-              <li>
-                  <a onClick="Get('BCS.options')">BCS Settings</a>
-              </li>
-              <li>
-                  <a onClick="Get('BCS.bty')">Bty Setup</a>
-              </li>
-              <li>
-                  <a>Location Stores</a>
-              </li>
-              <li>
-                  <a>Ammo Stores</a>
-              </li>
-              <li><a onClick="Get('Firemission.new')"><h3>New Firemission</h3></a></li>
-            </ul>
+        <ul class="sidebar-nav">
+            <li class="sidebar-brand">
+                <h1>FDC</h1>
+                <h4>Archer Bty</h4>
+            </li>
+            <li>
+                <a onClick="Get('BCS.options')">BCS Settings</a>
+            </li>
+            <li>
+                <a onClick="Get('BCS.battery')">Bty Setup</a>
+            </li>
+            <li>
+                <a>Location Stores</a>
+            </li>
+            <li>
+                <a>Ammo Stores</a>
+            </li>
+            <li class="pusher"></li>
+            <li><a onClick="Get('Firemission.new')"><h3>New Firemission</h3></a></li>
+            <li>
+              <ul class="firemission_sidebar">
+              </ul>
+            </li>
+          </ul>
       </div>
       <!-- /#sidebar-wrapper -->
       <!-- Page Content -->
@@ -96,27 +101,32 @@
             <div class="row page object" id="bty_setup" hidden>
                 <div class="col-lg-12">
                   <h1>Battery Setup</h1>
+                  <p class="bg-danger"><span class="flash"></span></p>
                   <p>
                     <dl>
-                      <dt>Battery Callsign: </dt>  <dd><input type="text"></dd>
+                      <dt>Battery Callsign: </dt>  <dd><input type="text" class="variable" key="callsign"></dd>
                     </dl>
                     <table class="table">
                       <thead>
-                        <tr><th>Gun #</th><th>Position</th><th>Elevation</th><th>Type</th><th><button class="btn btn-xs btn-primary"><i class="fa fa-plus"></i></button></th></tr>
+                        <tr><th>Gun #</th><th>Position</th><th>Elevation</th><th>Type</th><th><button class="btn btn-xs btn-primary" onClick="Controller.BCS.battery.printGun()"><i class="fa fa-plus"></i></button></th></tr>
                       </thead>
-                      <tbody>
-                        <tr>
-                          <td><input type="text" value="" class="narrow"></td>
-                          <td><input type="text" value=""></td>
-                          <td><input type="text" value=""></td>
-                          <td><select>
+                      <tbody id="gun_list">
+                        <tr id="gun_template" class="object object-nested gun" hidden>
+                          <td><input type="text" value="" class="narrow variable" key="name"></td>
+                          <td><input type="text" value="" class="variable" key="position.mgrs_string"></td>
+                          <td><input type="text" value="" class="variable" key="position.elev"></td>
+                          <td><select class="variable" key="type">
                             <option value="mortar_82">Mk6</option>
                           </select></td>
-                          <td><button class="btn btn-xs btn-danger"><i class="fa fa-minus"></i></button></td>
+                          <td><button class="btn btn-xs btn-danger" onClick="Controller.BCS.battery.deleteGun(this)"><i class="fa fa-minus"></i></button></td>
                         </tr>
                       </tbody>
                     </table>
                   </p>
+                </div>
+                <div class="col-md-12 btn-toolbar">
+                    <button class="btn btn-primary pull-right" onClick="Post('BCS.battery', this)">Save</button >
+                    <button class="btn btn-danger pull-right" onClick="Get('BCS.battery')">Discard</button >
                 </div>
             </div>
 
@@ -148,7 +158,7 @@
                       <dt>Grid: </dt>  <dd><input type="text" class="variable" key="grid"></dd>
                       <dt>Elevation: </dt><dd><input type="number" value=0 class="variable" key="elevation"> meters</dd>
                     </dl>
-                    <button class="btn btn-primary pull-right" onClick="Post('Firemission.new', this)">Next</button >
+                    <button class="btn btn-primary pull-right" onClick="Post('Firemission.setup', this)">Next</button >
                   </div>
 
                   <div class="col-sm-8 changer shift buttonTarget targetMethods  object-nested" object-class="TargetMethods.Shift" hidden>
@@ -159,7 +169,7 @@
                       <dt>LR: </dt><dd><input type="number" value=0 class="variable" key="lr"> meters</dd>
                       <dt>UD: </dt><dd><input type="number" value=0 class="variable" key="ud"> meters</dd>
                     </dl>
-                    <button class="btn btn-primary pull-right" onClick="Post('Firemission.new', this)">Next</button >
+                    <button class="btn btn-primary pull-right" onClick="Post('Firemission.setup', this)">Next</button >
                   </div>
 
                   <div class="col-sm-8 changer polar buttonTarget targetMethods  object-nested" object-class="TargetMethods.Polar" hidden>
@@ -169,14 +179,14 @@
                       <dt>Distance: </dt><dd><input type="number" value=0 class="variable" key="distance"> meters</dd>
                       <dt>VI: </dt><dd><input type="number" value=0 class="variable" key="vi"> meters</dd>
                     </dl>
-                    <button class="btn btn-primary pull-right" onClick="Post('Firemission.new', this)">Next</button >
+                    <button class="btn btn-primary pull-right" onClick="Post('Firemission.setup', this)">Next</button >
                   </div>
                 </div>
               </div>
             </div>
 
 
-            <div class="row page" id="firemission_engagement" hidden>
+            <div class="row page object" id="firemission_engagement" hidden>
               <div class="col-lg-7">
                 <h1><span class="variable" key="name"></span> Engagement</h1>
                 <hr>
@@ -187,24 +197,42 @@
                 <hr>
 
                 <h3>Adjust</h3>
-                <select><option>Gun 1</option></select>
-                <select><option>HE</option></select>
-                <select><option>Quick</option></select>
+                <select class="variable gun-select" key="adjust.guns"><option>Gun 1</option></select>
+                <select class="variable" key="adjust.shell"><option>HE</option></select>
+                <select class="variable" key="adjust.fuze"><option>Quick</option></select>
 
                 <h3>Fire For Effect</h3>
-                <select><option>Battery</option></select>
-                <input type="number" class="narrow" value=0> Rounds 
-                <select><option>HE</option></select>
-                <select><option>Quick</option></select>
+                <select class="variable  gun-select" key="ffe.guns"><option>Battery</option></select>
+                <input type="number" class="narrow" value=0 class="variable" key="ffe.rounds"> Rounds 
+                <select class="variable" key="ffe.shell"><option>HE</option></select>
+                <select class="variable" key="ffe.fuze"><option>Quick</option></select>
                 <hr>
 
                 <dl>
-                  <dt>Sheaf: </dt><dd><select><option>Parallel</option></select></dd>
+                  <dt>Sheaf: </dt><dd><select class="variable" key="engagement.sheaf.type" onChange="View.helpers.viewChanger(this, '#sheaf')">
+                  <option value="parallel">Parallel</option>
+                  <option value="converged">Converged</option>
+                  <option value="linear">Linear</option>
+                  <option value="open">Open</option>
+                  <option value="special">Special</option>
+                  </select></dd>
+                </dl>
+                <div id="sheaf">
+                  <div class="changer converged linear open special" hidden>
+                    <dl>
+                      <dt>Quick: </dt><dd><select class="variable" key="engagement.sheaf.quick"><option value="true">ON</option><option value=false>OFF</option></select></dd>
+                      <dt>Direction: </dt><dd><input type="number" value=0 class="variable" key="engagement.sheaf.direction"> mils</dd>
+                      <dt>Length: </dt><dd><input type="number" value=0 class="variable" key="engagement.sheaf.length"> meters</dd>
+                    </dl>
+                    <hr>
+                  </div>
+                </div>
+                <dl>
                   <dt>Sweeps/Zones: </dt><dd><select><option>Off</option></select></dd>
                 </dl>
               </div>
               <div class="col-sm-7">
-                <button class="btn btn-primary pull-right">Solutions</button >
+                <button class="btn btn-primary pull-right" onClick="Post('Firemission.engagement',this)">Solutions</button >
               </div>
             </div>
 

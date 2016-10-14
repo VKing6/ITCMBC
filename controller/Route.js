@@ -2,6 +2,7 @@ Controller = {};
 function Get(route, variables) {
     controller = routeSplitter(route);
     controller.get(variables);
+    Controller.Firemission.sidebar.get();
 }
 
 function Post(route, source) {

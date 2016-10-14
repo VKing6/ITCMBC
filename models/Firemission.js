@@ -4,7 +4,8 @@ Firemission = {
         return {
             name: name,
             id: name,
-            type: "ffe", //ADJ, FFE, SUPPRESS, FPF
+            type: "ffe", //ADJ, FFE, SUPPRESS, FPF,
+            state: "setup",
             target: {
                 methodObject: null,
                 processMethod: function(object){
@@ -22,12 +23,12 @@ Firemission = {
                 area: null //sweeps/zones will go here if relevant
             },
             adjust: {
-                gun: "All",
+                guns: "All",
                 shell: "HE",
                 fuze: "Quick"
             },
             ffe: {
-                guns: [],
+                guns: "All",
                 rounds: 1,
                 shell: "HE",
                 fuze: "Quick"
