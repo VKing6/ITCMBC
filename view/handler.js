@@ -75,7 +75,6 @@ View = {
                 key = $(this).attr('key');
                 obj[key] = kp;
             });
-            console.log(obj);
             return obj;
         },
         updateVariable: function(target, element) {
@@ -113,7 +112,6 @@ function nestedPut(object, key, value) {
     subKey = null;
     for (var i = 0; i < routes.length; i++) {
         subKey = routes[i];
-        console.log(i, routes.length);
         if(i < routes.length - 1)
         {
             if(current[subKey] == null) {

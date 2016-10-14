@@ -25,7 +25,7 @@ Controller.BCS = {
                 gun.name = gunForm.name;
                 gun.type = gunForm.type;
                 console.log(gunForm);
-                gun.position = Position.generate(gunForm['position.mgrs_string'], gunForm['position.elev']);
+                gun.position = Position.generate(gunForm.position.mgrs_string, gunForm.position.elev);
                 if(Gun.validator.validate(gun)) {
                     guns.push(gun);
                 }else{

@@ -1,62 +1,122 @@
-/*======================================Semi-controller======================================*/
-
-function processBty(guns, sheaf, target, sweepZone) {
-
-}
-
-/*======================================Functional======================================*/
-
-function processBty(baseEndPos, print) {
-    calculateController.setMapFocus(baseEndPos);
-    var ret = [];
-    var sheaf = calculateController.sheaf
-    var sheafWidthMod = sheaf.getLength() / 2;
-    sheafDir = sheaf.getDir();
-    if (sheaf.getType() != 'special' && sheaf.getQuick() == 'true') {
-        sheafDir = calcDirection(calculateController.getBatteryPos().mgrs, baseEndPos.mgrs) / 360 * 6400;
-    }
-    console.log(calculateController.guns);
-    for (var i = 0; i < calculateController.guns.length; i++) {
-        var endPos = baseEndPos;
-        var gun = calculateController.guns[i];
-        var gunPos = calculateController.guns[i].getPos();
-        if (sheaf.getType() == 'parallel') {
-            gunPos = calculateController.getBatteryPos();
-        } else if (sheaf.getType() == 'special') {
-            var guns = calculateController.guns.length;
-            WidthPerGun = sheaf.getLength() / guns;
-            var halfSheaf = sheaf.getLength() / 2;
-            offset = (i+1) * WidthPerGun - (WidthPerGun / 2) - halfSheaf;
-            console.log(offset);
-            //offset = (calculateController.guns.length % 2 == 0) ? sheafWidthMod * (i-1) -0.5 : sheafWidthMod * (i-1) ;
-            endPos = adjustGridToGrid(endPos, sheafDir, 0, offset, 0, 0);
-        } else if (sheaf.getType() == 'linear') {
-            endPos = adjustGridToGrid(endPos, sheafDir, 0, 40 * (i-1), 0, 0);
-        } else if (sheaf.getType() == 'open') {
-            endPos = adjustGridToGrid(endPos, sheafDir, 0, 60 * (i-1), 0, 0);
-        } // else it's converged sheaf
-        calculateController.drawCross(gunPos, 'multiply');
-        var res = getSolutions(gunPos, endPos);
-        ret[i] = res;
-        if(print) {
-            gun.setResults(res);
-        }
-    }
-    return ret;
-}
-
-
-
 /*=========================================BTY========================================*/
 
-/**
- * Calculates a target for each gun based on the sheaf
- * parameter: guns key value json list
- * parameter: sheaf json object
- * returns json object {gunName: targetPos, gunName: targetPos}
- */
-function getSheafTargets(guns, sheaf, target) {
+function calculate(firemission) {
+    bty = window.BCS.battery;
+    for (var i = bty.guns.length - 1; i >= 0; i--) {
+        gun = bty.guns[i];
+        solution = {
+            piece: gun.name,
+            targetPos:null,
+            type: gun.type,
+            mof: firemission.engagement.mof,
+            moc: firemission.engagement.moc,
+            rounds: firemission.ffe.rounds,
+            shell: firemission.ffe.shell,
+            fuze: firemission.ffe.fuze,
+            charge: firemission.engagement.charge,
+            az:null,
+            qd:null,
+            tof:null
+        }
+        if(firemission.adjust.guns == gun.name || firemission.adjust.guns == "All")
+        {
+            $.extend(solution, {
+                rounds: 1,
+                shell: firemission.adjust.shell,
+                fuze: firemission.adjust.fuze
+            });
+        } else {
+            $.extend(solution, {
+                moc: "dnl"
+            });
+        }
+        if(solution.type == "mortar_82")
+        {
+            solution.calcShell = "all" + window.BCS.options.windResistance;
+        }else{
+            solution.calcShell = solution.shell + window.BCS.options.windResistance;
+        }
+        firemission.solutions[gun.name] = solution;
+    }
 
+    calcBatteryPosition(firemission);
+    setSheafTargets(firemission);
+    fillSolutions(firemission);
+    console.log(firemission);
+    return firemission;
+}
+
+
+function calcBatteryPosition(firemission) {
+    positions = [];
+    bty = window.BCS.battery;
+    for (var i = bty.guns.length - 1; i >= 0; i--) {
+        gun = bty.guns[i];
+        positions.push(gun.position);
+    }
+    pos = calcAverage(positions);
+    firemission.solutions.bty = {position: pos};
+}
+
+function setSheafTargets(firemission) {
+    sheaf = firemission.engagement.sheaf;
+    sheafWidthMod = sheaf.length / 2;
+    sheafDir = sheaf.direction;
+    batteryPos = firemission.solutions.bty.position;
+    target = firemission.target.position;
+    if (sheaf.type != 'special' && sheaf.quick == 'true') {
+        sheafDir = calcDirection(batteryPos, target) / 360 * 6400;
+    }
+
+    bty = window.BCS.battery;
+    for (var i = bty.guns.length - 1; i >= 0; i--) {
+        gun = bty.guns[i];
+        var gunTarget = target;
+        var sourcePosition = gun.position;
+        switch(sheaf.type) {
+            case "parallel":
+                sourcePosition = batteryPos;
+                break;
+            case "special":
+                {
+                    var guns = calculateController.guns.length;
+                    WidthPerGun = sheaf.getLength() / guns;
+                    var halfSheaf = sheaf.getLength() / 2;
+                    offset = (i+1) * WidthPerGun - (WidthPerGun / 2) - halfSheaf;
+                    gunTarget = adjustGridToGrid(gunTarget, sheafDir, 0, offset, 0, 0);
+                }
+                break;
+            case "linear":
+                gunTarget = adjustGridToGrid(gunTarget, sheafDir, 0, 40 * (i-1), 0, 0);
+                break;
+            case "open":
+                gunTarget = adjustGridToGrid(gunTarget, sheafDir, 0, 60 * (i-1), 0, 0);
+                break;
+        }
+        firemission.solutions[gun.name].sourcePos = sourcePosition;
+        firemission.solutions[gun.name].targetPos = gunTarget;
+    }
+}
+
+function fillSolutions(firemission) {
+    keys = Object.keys(firemission.solutions);
+    for (var i = 0; i < keys.length; i++) {
+        solution = firemission.solutions[keys[i]];
+        results = getSolutions(solution);
+        quads = null;
+        console.log('results:', results);
+        if(solution.charge == "Auto") {
+            for (var i = 0; i < results.quadrants.length; i++) {
+                res = results.quadrants[i]
+                if(res != null) quads = results.quadrants[i];
+            }
+        } else {
+            quads = results.quadrants[parseInt(solution.charge)];
+        }
+        solution.az = Math.round(results.azimuth);
+        solution.qd = quads.qd;
+        solution.tof = quads.tof;
+    }
 }
 
 /**
@@ -75,12 +135,12 @@ function getBatteryPosition(guns) {
 /**
  * Gets solution for a gun with a round between two positions
  */
-function getSolutions(gun, round, startPos, endPos) {
-    var distance = calcDistance(startPos.mgrs, endPos.mgrs);
-    var azimuth = calcDirection(startPos.mgrs, endPos.mgrs);
-    var solutions = calcQuadrants(gun, round, distance, endPos.elev - startPos.elev);
-    calculateController.drawCross(endPos, 'add');
-    return {'azimuth' : azimuth / 360 * 6400, 'distance' : distance, 'quadrants' : solutions ,start: startPos, end: endPos};
+function getSolutions(solutionBase) {
+    console.log(solutionBase);
+    var distance = calcDistance(solutionBase.sourcePos.mgrs, solutionBase.targetPos.mgrs);
+    var azimuth = calcDirection(solutionBase.sourcePos.mgrs, solutionBase.targetPos.mgrs);
+    var solutions = calcQuadrants(solutionBase.type, solutionBase.calcShell, distance, solutionBase.targetPos.elev - solutionBase.sourcePos.elev);
+    return {'azimuth' : azimuth / 360 * 6400, 'distance' : distance, 'quadrants' : solutions};
 }
 
 /*======================================Quadrant======================================*/
@@ -96,8 +156,8 @@ function calcQuadrants(gun, round, distance, elevDiff) {
     var res = [];
     for (var i = charges.length - 1; i >= 0; i--) {
         var charge = charges[i];
-        console.log(calculateController.options.getRangeTable());
-        res[i] = QuadrantFromRange(tables[gun][round][charge], distance, elevDiff);
+        qds = QuadrantFromRange(tables[gun][round][charge], distance, elevDiff);
+        if(qds != null) res[i] = qds;
     }
     return res;
 }
@@ -128,7 +188,7 @@ function QuadrantFromRange(table, distance, elevDiff) {
         console.log('qd', elevDiff);
         return {'qd' : Math.round(qd), 'tof' : table[low].tof};
     }else{
-        return {'qd' : null, 'tof' : null};
+        return null;
     }            
 }
 
@@ -178,8 +238,7 @@ function calcAverage(positions) {
     var total = positions.length;
     totalEast = Math.floor(totalEast / total);
     totalNorth = Math.floor(totalNorth / total);
-    console.log(toFiveDigit(totalEast, true));
-    return toPos(toFiveDigit(totalEast, true) + '' + toFiveDigit(totalNorth,true), Math.floor(totalElev / total));
+    return Position.generate(Position.toFiveDigit(totalEast, true) + '' + Position.toFiveDigit(totalNorth,true), Math.floor(totalElev / total));
 }
 
 function getGridDiff(start, end) {

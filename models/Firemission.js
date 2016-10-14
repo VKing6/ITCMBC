@@ -16,8 +16,8 @@ Firemission = {
                 position: null
             },
             engagement: {
-                moc: "AMC",
-                mof: "FFE",
+                moc: "amc",
+                mof: "ffe",
                 charge: "Auto",
                 sheaf: Sheaf.new(),
                 area: null //sweeps/zones will go here if relevant

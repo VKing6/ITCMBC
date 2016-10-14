@@ -21,11 +21,12 @@
     <script src="models\Sheaf.js"></script>
     <script src="models\Gun.js"></script>
     <script src="models\TargetMethods.js"></script>
-    <script src="models\FireMission.js"></script>
+    <script src="models\Firemission.js"></script>
     <script src="view\handler.js"></script>
     <script src="controller\Route.js"></script>
     <script src="controller\Firemission.js"></script>
     <script src="controller\BCS.js"></script>
+    <script src="tables\tables.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -185,25 +186,32 @@
               </div>
             </div>
 
-
+            <!--                          FM ENGAGE                     -->
             <div class="row page object" id="firemission_engagement" hidden>
+              <p class="bg-danger"><span class="flash"></span></p>
+              <input type="hidden" class="variable" key="id">
+              <input type="hidden" class="variable" key="engagement.mof">
               <div class="col-lg-7">
                 <h1><span class="variable" key="name"></span> Engagement</h1>
                 <hr>
                 <dl>
-                  <dt>MOC: </dt><dd><select class="variable" key="engagement.moc"><option value="AMC">AMC</option><option>DNL</option value="DNL"><option value="WR">WR</option></select></dd>
+                  <dt>MOC: </dt><dd><select class="variable" key="engagement.moc"><option value="amc">AMC</option><option>DNL</option value="dnl"><option value="wr">WR</option></select></dd>
                   <dt>Charge: </dt><dd><select class="variable" key="engagement.charge"><option>Auto</option></select></dd>
                 </dl>
                 <hr>
 
                 <h3>Adjust</h3>
                 <select class="variable gun-select" key="adjust.guns"><option>Gun 1</option></select>
-                <select class="variable" key="adjust.shell"><option>HE</option></select>
+                <select class="variable" key="adjust.shell">
+                  <option value="HE">HE</option>
+                  <option value="WP">HE</option>
+                  <option value="Ilum">HE</option>
+                </select>
                 <select class="variable" key="adjust.fuze"><option>Quick</option></select>
 
                 <h3>Fire For Effect</h3>
                 <select class="variable  gun-select" key="ffe.guns"><option>Battery</option></select>
-                <input type="number" class="narrow" value=0 class="variable" key="ffe.rounds"> Rounds 
+                <input type="number" class="narrow variable" value=2 key="ffe.rounds"> Rounds 
                 <select class="variable" key="ffe.shell"><option>HE</option></select>
                 <select class="variable" key="ffe.fuze"><option>Quick</option></select>
                 <hr>
@@ -236,9 +244,10 @@
               </div>
             </div>
 
+            <!--                          SOLUTIONS                     -->
             <div class="row page" id="firemission_solution" hidden>
               <div class="col-lg-7">
-                <h1>XX0000 Solutions</h1>
+                <h1><span class="variable" key="name"></span>  Solutions</h1>
                 <table class="table">
                   <thead>
                     <tr>
@@ -254,47 +263,11 @@
                       <th>TOF</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td>ADJ</td>
-                      <td>AMC</td>
-                      <td>1</td>
-                      <td>HE</td>
-                      <td>Quick</td>
-                      <td>Ch 3</td>
-                      <td>6300</td>
-                      <td>1138</td>
-                      <td>34.7</td>
-                    </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>FFE</td>
-                      <td>DNL</td>
-                      <td>3</td>
-                      <td>HE</td>
-                      <td>Quick</td>
-                      <td>Ch 3</td>
-                      <td>6300</td>
-                      <td>1138</td>
-                      <td>34.7</td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td>FFE</td>
-                      <td>DNL</td>
-                      <td>3</td>
-                      <td>HE</td>
-                      <td>Quick</td>
-                      <td>Ch 3</td>
-                      <td>6300</td>
-                      <td>1138</td>
-                      <td>34.7</td>
-                    </tr>
+                  <tbody class="solutions">
                   </tbody>
                 </table>
-                <button class="btn btn-danger btn-block">WARNING: DANGER CLOSE BP3, OP4</button><br/>
-                <button class="btn btn-primary">Send datalink orders</button>
+                <button class="btn btn-danger btn-block" hidden>WARNING: DANGER CLOSE BP3, OP4</button><br/>
+                <button class="btn btn-primary" disabled>Send datalink orders</button>
                 <hr>
                 <div class="row">
                   <div class="col-md-4">
@@ -307,7 +280,7 @@
                     12.34 Seconds<br/>
                   </div>
                   <div class="col-md-4">
-                    <button class="btn btn-danger btn-block">Shot</button><br/>
+                    <button class="btn btn-danger btn-block">Cease Fire</button><br/>
                   </div>
                 </div>
                 <hr>
