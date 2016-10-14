@@ -4,7 +4,8 @@ Adjust = {
             ot: 0,
             ad: 0,
             lr: 0,
-            ud: 0
+            ud: 0,
+            mof: "adj"
         }
     },
     validator: Validator.new(function(object){

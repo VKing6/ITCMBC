@@ -266,20 +266,23 @@
                   <tbody class="solutions">
                   </tbody>
                 </table>
-                <button class="btn btn-danger btn-block" hidden>WARNING: DANGER CLOSE BP3, OP4</button><br/>
+                <div class="col-xs-12 danger-close" hidden>
+                  <button class="btn btn-danger btn-block">WARNING: DANGER CLOSE <span class="danger-close-units"></span></button><br/>
+                </div>
                 <button class="btn btn-primary" disabled>Send datalink orders</button>
                 <hr>
                 <div class="row">
-                  <div class="col-md-4">
-                    <button class="btn btn-primary btn-block">Shot</button><br/>
-                    1.23 Seconds<br/>
-                    <button class="btn btn-success btn-block">SPLASH T-10</button>
+                  <div class="col-md-4 shot-timer">
+                    <button class="btn btn-primary btn-block" onClick="startTimer('shot', this)">Shot</button><br/>
+                    <span class="shot-clock"></span></span><br/>
+                    <p class="shot-splash bg-success" hidden>SPLASH<span class="shot-t">T-10</span></p>
                   </div>
-                  <div class="col-md-4">
-                    <button class="btn btn-primary btn-block">Rounds Complete</button><br/>
-                    12.34 Seconds<br/>
+                  <div class="col-md-4 shot-timer">
+                    <button class="btn btn-primary btn-block" onClick="startTimer('complete', this)">Rounds Complete</button><br/>
+                    <span class="shot-clock"></span><br/>
+                    <p class="shot-splash bg-success" hidden>ROUNDS COMPLETE<span class="shot-t">T-10</span></p>
                   </div>
-                  <div class="col-md-4">
+                  <div class="col-md-4" hidden>
                     <button class="btn btn-danger btn-block">Cease Fire</button><br/>
                   </div>
                 </div>
@@ -287,33 +290,33 @@
                 <div class="row">
                   <div class="col-md-2"></div>
                   <div class="col-md-4">
-                    <button class="btn btn-primary btn-block">Adjust</button>
+                    <button class="btn btn-primary btn-block" onClick="Get('Firemission.adjust')">Adjust</button>
                   </div>
                   <div class="col-md-4">
-                    <button class="btn btn-primary btn-block">End Mission</button>
+                    <button class="btn btn-primary btn-block" onClick="Get('Firemission.eom')">End Mission</button>
                   </div>
                   <div class="col-md-2"></div>
                 </div>
               </div>
             </div>
 
-            <div class="row page" id="firemission_adjust" hidden>
+            <div class="row page object" id="firemission_adjust" hidden>
               <div class="col-md-8">
-                <h1>XX0000 Adjust</h1>
+                <h1><span class="variable" key="name"></span> Adjust</h1>
                 <dl>
-                  <dt>OT: </dt><dd><input type="number" value=0> mils</dd>
-                  <dt>AD: </dt><dd><input type="number" value=0> meters</dd>
-                  <dt>LR: </dt><dd><input type="number" value=0> meters</dd>
-                  <dt>UD: </dt><dd><input type="number" value=0> meters</dd>
+                  <dt>OT: </dt><dd><input type="number" value=0 class="variable" key="ot"> mils</dd>
+                  <dt>AD: </dt><dd><input type="number" value=0 class="variable" key="ad"> meters</dd>
+                  <dt>LR: </dt><dd><input type="number" value=0 class="variable" key="lr"> meters</dd>
+                  <dt>UD: </dt><dd><input type="number" value=0 class="variable" key="ud"> meters</dd>
                 </dl>
                 <br/>
                 <dl>
                   <dt>MOF: </dt><dd>
-                    <select><option>ADJ</option><option>FFE</option></select>
+                    <select class="variable" key="mof"><option value="adj">ADJ</option><option value="ffe">FFE</option></select>
                   </dd>
                 </dl>
                 <br/>
-                  <button class="btn btn-primary pull-right">Submit Adjustment</button><br/>
+                  <button class="btn btn-primary pull-right" onClick="Post('Firemission.adjust', this)">Submit Adjustment</button><br/>
               </div>
             </div>
 

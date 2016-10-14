@@ -18,17 +18,19 @@ function calculate(firemission) {
             qd:null,
             tof:null
         }
-        if(firemission.adjust.guns == gun.name || firemission.adjust.guns == "All")
-        {
-            $.extend(solution, {
-                rounds: 1,
-                shell: firemission.adjust.shell,
-                fuze: firemission.adjust.fuze
-            });
-        } else {
-            $.extend(solution, {
-                moc: "dnl"
-            });
+        if(firemission.engagement.mof == "adj") {
+            if(firemission.adjust.guns == gun.name || firemission.adjust.guns == "All")
+            {
+                $.extend(solution, {
+                    rounds: 1,
+                    shell: firemission.adjust.shell,
+                    fuze: firemission.adjust.fuze
+                });
+            } else {
+                $.extend(solution, {
+                    moc: "dnl"
+                });
+            }
         }
         if(solution.type == "mortar_82")
         {
@@ -37,6 +39,11 @@ function calculate(firemission) {
             solution.calcShell = solution.shell + window.BCS.options.windResistance;
         }
         firemission.solutions[gun.name] = solution;
+        if(i == 1) {
+            firemission.solutions.bty = solution;
+            firemission.solutions.bty.piece = "bty"
+            firemission.solutions.bty.targetPos = firemission.target.position;
+        }
     }
 
     calcBatteryPosition(firemission);
@@ -55,7 +62,7 @@ function calcBatteryPosition(firemission) {
         positions.push(gun.position);
     }
     pos = calcAverage(positions);
-    firemission.solutions.bty = {position: pos};
+    firemission.solutions.bty.position = pos;
 }
 
 function setSheafTargets(firemission) {
@@ -102,20 +109,26 @@ function fillSolutions(firemission) {
     keys = Object.keys(firemission.solutions);
     for (var i = 0; i < keys.length; i++) {
         solution = firemission.solutions[keys[i]];
+        console.log('PROCESSING:', solution);
         results = getSolutions(solution);
         quads = null;
-        console.log('results:', results);
         if(solution.charge == "Auto") {
-            for (var i = 0; i < results.quadrants.length; i++) {
-                res = results.quadrants[i]
-                if(res != null) quads = results.quadrants[i];
+            for (var j = 0; j < results.quadrants.length; j++) {
+                res = results.quadrants[j]
+                if(res != null) 
+                {
+                    quads = results.quadrants[j];
+                    solution.displayCharge = j;
+                }
             }
         } else {
             quads = results.quadrants[parseInt(solution.charge)];
+            solution.displayCharge = solution.charge;
         }
         solution.az = Math.round(results.azimuth);
         solution.qd = quads.qd;
         solution.tof = quads.tof;
+        console.log('PROCESSED', solution);
     }
 }
 

@@ -11,6 +11,11 @@ function Post(route, source) {
     controller.post(object, source);
 }
 
+function Delete(route, id) {
+    controller = routeSplitter(route);
+    controller.delete(id);
+}
+
 function routeSplitter(route) {
     var routes = route.split('.');
     obj = Controller;

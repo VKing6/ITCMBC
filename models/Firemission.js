@@ -8,10 +8,13 @@ Firemission = {
             state: "setup",
             target: {
                 methodObject: null,
-                processMethod: function(object){
+                processMethod: function(object) {
                     this.methodObject = object;
                     this.position = this.methodObject.getPosition();
                     return this.position;
+                },
+                adjust: function(adjustment) {
+                    this.position = adjustGridToGrid(this.position, adjustment.ot, adjustment.ad, adjustment.lr, adjustment.ud);
                 },
                 position: null
             },
@@ -25,7 +28,8 @@ Firemission = {
             adjust: {
                 guns: "All",
                 shell: "HE",
-                fuze: "Quick"
+                fuze: "Quick",
+                current: null
             },
             ffe: {
                 guns: "All",

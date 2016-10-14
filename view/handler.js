@@ -123,3 +123,39 @@ function nestedPut(object, key, value) {
         }
     }
 }
+
+timers = {};
+function startTimer(ref, source) {
+    if(timers[ref] != null) {
+        clearInterval(timers[ref].counter);
+    }
+    timer = {
+    }
+    timer.parent = $(source).parent('.shot-timer');
+    timer.clock = timer.parent.find('.shot-clock');
+    timer.splash = timer.parent.find('.shot-splash');
+    timer.tmin = timer.parent.find('.shot-t');
+    timer.splash.hide();
+    console.log(parseInt(BCS.options.alertToSplash));
+    tof = BCS.firemissions[Controller.Firemission.current].solutions['bty'].tof;
+    var count=tof * 100;
+    var messaged = false;
+    var counter = setInterval(
+        function() {
+            count--;
+            if(count <= 0)
+            {
+                timers[ref].tmin.hide();
+                clearInterval(timers[ref].counter);
+                return;
+            }else if(count <= parseInt(BCS.options.alertToSplash) * 100 && !messaged) {
+                timers[ref].tmin.html('T-' + Math.round(count / 100))
+                timers[ref].splash.show();
+                messaged = true;
+            }
+            timers[ref].clock.html(count / 100);
+        }
+    , 10, ref);
+    timer.counter = counter;
+    timers[ref] = timer;
+}

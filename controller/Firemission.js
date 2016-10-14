@@ -3,11 +3,13 @@ Controller.Firemission = {
         get: function() {
             firemission = window.Firemission.new();
             window.BCS.firemissions[firemission.id] = firemission;
+            Controller.Firemission.current = firemission.id;
             View.open('firemission_new', firemission);
         }
     },
     setup: {
         get: function(id) {
+            Controller.Firemission.current = id;
             firemission = window.BCS.firemissions[id];
             View.open('firemission_new', firemission);
         },
@@ -32,10 +34,15 @@ Controller.Firemission = {
             }else{
                 View.flash(Firemission.validator.errors);
             }
+        },
+        delete: function(id) {
+            delete window.BCS.firemissions[id];
+            Controller.BCS.battery.get();
         }
     },
     engagement: {
         get: function(id) {
+            Controller.Firemission.current = id;
             firemission = window.BCS.firemissions[id];
             View.open('firemission_engagement', firemission);
         },
@@ -53,6 +60,7 @@ Controller.Firemission = {
     },
     solutions: {
         get: function(id) {
+            Controller.Firemission.current = id;
             firemission = window.BCS.firemissions[id];
             firemission = window.calculate(firemission);
             guns = window.BCS.battery.guns;
@@ -61,18 +69,18 @@ Controller.Firemission = {
                 solution = firemission.solutions[guns[i].name];
                 $('#firemission_solution .solutions').append('<tr>'+
                     '<td>' + guns[i].name + '</td>' +
-                    '<td>' + solution.mof + '</td>' +
-                    '<td>' + solution.moc + '</td>' +
+                    '<td>' + solution.mof.toUpperCase() + '</td>' +
+                    '<td>' + solution.moc.toUpperCase() + '</td>' +
                     '<td>' + solution.rounds + '</td>' +
                     '<td>' + solution.shell + '</td>' +
                     '<td>' + solution.fuze + '</td>' +
-                    '<td>' + solution.charge + '</td>' +
+                    '<td>' + solution.displayCharge + '</td>' +
                     '<td>' + solution.qd + '</td>' +
                     '<td>' + solution.az + '</td>' +
                     '<td>' + solution.tof + '</td>' +
                 '</tr>');
             }
-            View.open('firemission_solution', firemission)
+            View.open('firemission_solution', firemission);
         },
         post: function() {
 
@@ -80,14 +88,22 @@ Controller.Firemission = {
     },
     adjust: {
         get: function() {
-
+            id = Controller.Firemission.current;
+            firemission = window.BCS.firemissions[id];
+            View.open('firemission_adjust', firemission);
         },
-        post: function() {
-
+        post: function(object) {
+            id = Controller.Firemission.current;
+            firemission = window.BCS.firemissions[id];
+            firemission.target.adjust(object);
+            console.log(object);
+            firemission.engagement.mof = object.mof;
+            Controller.Firemission.solutions.get(id);
         }
     },
     eom: {
         get: function() {
+            id = Controller.Firemission.current;
 
         },
         post: function() {
@@ -101,14 +117,20 @@ Controller.Firemission = {
             keys = Object.keys(window.BCS.firemissions);
             for (var i = 0; i < keys.length; i++) {
                 mission = window.BCS.firemissions[keys[i]];
-                sidebar.append('<li><a onClick="Get(\'Firemission.' + mission.state + '\', \'' + mission.id + '\') ">' + mission.name + '</a></li>');
+                sidebar.append(
+                    '<li><span onClick="Get(\'Firemission.' + 
+                    mission.state + '\', \'' + mission.id + '\') ">' + mission.name + '</a>' +
+                    '<span class="btn btn-danger" onClick="Delete(\'Firemission.setup\', \''+mission.id+'\')"><i class="fa fa-minus"></i></span>' +
+                    '</li>');
             }
         }
     },
     open: {
         get: function(id) {
+            Controller.Firemission.current = id;
             firemission = window.BCS.firemissions[id];
             Controller.Firemission[firemission.state].get(id);
         }
-    }
+    },
+    current: null
 }

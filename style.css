@@ -35,3 +35,10 @@ select{
 input.narrow {
     width:80px;
 }
+
+.shot-splash {
+  padding:15px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-align: center;
+}
