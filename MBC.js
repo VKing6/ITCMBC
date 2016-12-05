@@ -64,8 +64,7 @@ function startSweepZone(start, end, shape) {
 }
 
 function isDangerClose(target) {
-    dangerCloseHide();
-    var keys = Object.keys(pointStores);
+    var keys = Object.keys(window.Controller.BCS.pointStores);
     noDanger = true;
     for (var i = keys.length - 1; i >= 0; i--) {
         point = pointStores[keys[i]];
@@ -74,7 +73,7 @@ function isDangerClose(target) {
             var dist = calcDistance(target.mgrs, point.position.mgrs);
             console.log(dist);
             if(dist < 600) {
-                dangerClose(keys[i]);
+                console.log(keys[i]);
                 noDanger = false;
             }
         }

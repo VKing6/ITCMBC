@@ -17,6 +17,7 @@
     <script src="calculate.js"></script>
     <script src="models\Validator.js"></script>
     <script src="models\Position.js"></script>
+    <script src="models\StoredPoint.js"></script>
     <script src="models\Adjust.js"></script>
     <script src="models\Sheaf.js"></script>
     <script src="models\Gun.js"></script>
@@ -42,7 +43,7 @@
         <ul class="sidebar-nav">
             <li class="sidebar-brand">
                 <h1>FDC</h1>
-                <h4>Archer Bty</h4>
+                <h4 id="bty_name">Archer Bty</h4>
             </li>
             <li>
                 <a onClick="Get('BCS.options')">BCS Settings</a>
@@ -51,10 +52,10 @@
                 <a onClick="Get('BCS.battery')">Bty Setup</a>
             </li>
             <li>
-                <a>Location Stores</a>
+                <a onClick="Get('BCS.points')">Location Stores</a>
             </li>
             <li>
-                <a>Ammo Stores</a>
+                <a onClick="Get('BCS.ammo')">Ammo Stores</a>
             </li>
             <li class="pusher"></li>
             <li><a onClick="Get('Firemission.new')"><h3>New Firemission</h3></a></li>
@@ -84,7 +85,7 @@
                       <dt>Wind Resistance: </dt>  <dd>
                         <select class="variable" key="windResistance">
                           <option value="">On</option>
-                          <option value="_NWR">Off</option>
+                          <option value="_nwr">Off</option>
                         </select>
                       </dd>
                       <dt>Firemission Code: </dt> <dd><input type="text" placeholder="time" value="FM" class="variable" key="firemissionCode"></dd>
@@ -131,11 +132,64 @@
                 </div>
             </div>
 
+            <!--                          LOCATION STORES                     -->
+            <div class="row page object" id="bty_points" hidden>
+                <div class="col-lg-12">
+                  <h1>Known Points</h1>
+                  <p class="bg-danger"><span class="flash"></span></p>
+                  <table class="table">
+                    <thead>
+                      <tr><th>Reference</th><th>Position</th><th>Elevation</th><th>Friendly</th><th><button class="btn btn-xs btn-primary" onClick="Controller.BCS.points.add()"><i class="fa fa-plus"></i></button></th></tr>
+                    </thead>
+                    <tbody id="point_list">
+                      <tr id="point_template" class="object object-nested point" hidden>
+                        <td><input type="text" value="" class="variable" key="name"></td>
+                        <td><input type="text" value="" class="variable" key="position.mgrs_string"></td>
+                        <td><input type="text" value="" class="variable" key="position.elev"></td>
+                        <td><select class="variable" type="bool" key="friendly">
+                          <option value="true">true</option>
+                          <option value="false">false</option>
+                        </select></td>
+                        <td><button class="btn btn-xs btn-danger" onClick="Controller.BCS.points.delete(this)"><i class="fa fa-minus"></i></button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col-md-12 btn-toolbar">
+                    <button class="btn btn-primary pull-right" onClick="Post('BCS.points', this)">Save</button >
+                    <button class="btn btn-danger pull-right" onClick="Get('BCS.points')">Discard</button >
+                </div>
+            </div>
+
             <!--                          BATTERY SETUP                     -->
+            <div class="row page object" id="bty_ammo" hidden>
+              <div class="col-lg-12">
+                <h1>Battery Ammo Stores</h1>
+                <p class="bg-danger"><span class="flash"></span></p>
+                <div class="col-sm-3 col-xs-12">
+                  <table class="table">
+                    <thead>
+                      <tr><th>Type</th><th>#</th></tr>
+                    </thead>
+                    <tbody class="loop" key="ammo">
+                      <tr class="template element" hidden><td><input type="text" value="" class="variable" key="name"></td><td><input type="number" value="" class="variable" key="count"></td></tr>
+                    </tbody>
+                  </table>
+                  <button class="btn btn-primary pull-right" onClick="Post('BCS.ammo', this)">Save</button >
+                </div>
+              </div>
+            </div>
+
+            <!--                          FIREMISSION SETUP                     -->
             <div class="row page object" id="firemission_new" hidden>
               <input type="hidden" class="variable" key="id">
               <div class="col-lg-12">
                 <h1>New Firemission</h1>
+                <ul class="nav nav-tabs">
+                  <li role="presentation" class="active"><a href="#" onClick="Get('Firemission.tabs', 'setup')">Setup</a></li>
+                  <li role="presentation"><a href="#" onClick="Get('Firemission.tabs', 'engagement')">Engagement</a></li>
+                  <li role="presentation"><a href="#" onClick="Get('Firemission.tabs', 'solutions')">Solutions</a></li>
+                </ul>
                 <p class="bg-danger"><span class="flash"></span></p>
                 <dl>
                   <dt>Firemission Name: </dt>  <dd><input type="text" class="variable" key="name"></dd>
@@ -155,16 +209,16 @@
                 <div class="row changer-list" id="methods">
                   <div class="col-sm-8 changer grid buttonTarget targetMethods object-nested" object-class="TargetMethods.Grid">
                     <dl>
-                      <dt>Load Known Point: </dt><dd><select><option>FO 12</option></select><button>Load</button></dd>
-                      <dt>Grid: </dt>  <dd><input type="text" class="variable" key="grid"></dd>
-                      <dt>Elevation: </dt><dd><input type="number" value=0 class="variable" key="elevation"> meters</dd>
+                      <dt>Load Known Point: </dt><dd><select class="knownpoint" target="position" onChange="View.helpers.loadPos(this)"><option>FO 12</option></select><button onClick="View.helpers.loadPos(this)" target="knownpoint">Load</button></dd>
+                      <dt>Grid: </dt>  <dd><input type="text" class="mgrs variable" key="grid"></dd>
+                      <dt>Elevation: </dt><dd><input type="number" value=0 class="elevation variable" key="elevation"> meters</dd>
                     </dl>
                     <button class="btn btn-primary pull-right" onClick="Post('Firemission.setup', this)">Next</button >
                   </div>
 
                   <div class="col-sm-8 changer shift buttonTarget targetMethods  object-nested" object-class="TargetMethods.Shift" hidden>
                     <dl>
-                      <dt>Known Point: </dt><dd><select class="knownpoint" key="position"><option>FO 12</option></select></dd>
+                      <dt>Known Point: </dt><dd><select class="knownpoint" key="point"><option>FO 12</option></select></dd>
                       <dt>OT: </dt><dd><input type="number" value=0 class="variable" key="ot"> mils</dd>
                       <dt>AD: </dt><dd><input type="number" value=0 class="variable" key="ad"> meters</dd>
                       <dt>LR: </dt><dd><input type="number" value=0 class="variable" key="lr"> meters</dd>
@@ -175,7 +229,7 @@
 
                   <div class="col-sm-8 changer polar buttonTarget targetMethods  object-nested" object-class="TargetMethods.Polar" hidden>
                     <dl>
-                      <dt>Observer: </dt><dd><select class="knownpoint" key="position"><option>FO 12</option></select></dd>
+                      <dt>Observer: </dt><dd><select class="knownpoint" key="point"><option>FO 12</option></select></dd>
                       <dt>Direction: </dt><dd><input type="number" value=0 class="variable" key="direction"> mils</dd>
                       <dt>Distance: </dt><dd><input type="number" value=0 class="variable" key="distance"> meters</dd>
                       <dt>VI: </dt><dd><input type="number" value=0 class="variable" key="vi"> meters</dd>
@@ -193,10 +247,21 @@
               <input type="hidden" class="variable" key="engagement.mof">
               <div class="col-lg-7">
                 <h1><span class="variable" key="name"></span> Engagement</h1>
+                <ul class="nav nav-tabs">
+                  <li role="presentation"><a href="#" onClick="Get('Firemission.tabs', 'setup')">Setup</a></li>
+                  <li role="presentation" class="active"><a href="#" onClick="Get('Firemission.tabs', 'engagement')">Engagement</a></li>
+                  <li role="presentation"><a href="#" onClick="Get('Firemission.tabs', 'solutions')">Solutions</a></li>
+                </ul>
+                <!--<button class="btn pull-left" onClick="Get('Firemission.back')">Back</button >-->
                 <hr>
                 <dl>
                   <dt>MOC: </dt><dd><select class="variable" key="engagement.moc"><option value="amc">AMC</option><option>DNL</option value="dnl"><option value="wr">WR</option></select></dd>
-                  <dt>Charge: </dt><dd><select class="variable" key="engagement.charge"><option>Auto</option></select></dd>
+                  <dt>Charge: </dt><dd><select class="variable" key="engagement.charge">
+                    <option>Auto</option>
+                    <option>0</option>
+                    <option>1</option>
+                    <option>2</option>
+                  </select></dd>
                 </dl>
                 <hr>
 
@@ -204,15 +269,18 @@
                 <select class="variable gun-select" key="adjust.guns"><option>Gun 1</option></select>
                 <select class="variable" key="adjust.shell">
                   <option value="HE">HE</option>
-                  <option value="WP">HE</option>
-                  <option value="Ilum">HE</option>
+                  <option value="WP">WP</option>
+                  <option value="Ilum">Ilum</option>
                 </select>
                 <select class="variable" key="adjust.fuze"><option>Quick</option></select>
 
                 <h3>Fire For Effect</h3>
                 <select class="variable  gun-select" key="ffe.guns"><option>Battery</option></select>
                 <input type="number" class="narrow variable" value=2 key="ffe.rounds"> Rounds 
-                <select class="variable" key="ffe.shell"><option>HE</option></select>
+                <select class="variable" key="ffe.shell">
+                  <option value="HE">HE</option>
+                  <option value="WP">WP</option>
+                  <option value="Ilum">Ilum</option></select>
                 <select class="variable" key="ffe.fuze"><option>Quick</option></select>
                 <hr>
 
@@ -226,14 +294,14 @@
                   </select></dd>
                 </dl>
                 <div id="sheaf">
-                  <div class="changer converged linear open special" hidden>
+                  <div class="changer special" hidden>
                     <dl>
                       <dt>Quick: </dt><dd><select class="variable" key="engagement.sheaf.quick"><option value="true">ON</option><option value=false>OFF</option></select></dd>
                       <dt>Direction: </dt><dd><input type="number" value=0 class="variable" key="engagement.sheaf.direction"> mils</dd>
                       <dt>Length: </dt><dd><input type="number" value=0 class="variable" key="engagement.sheaf.length"> meters</dd>
                     </dl>
-                    <hr>
                   </div>
+                    <hr>
                 </div>
                 <dl>
                   <dt>Sweeps/Zones: </dt><dd><select><option>Off</option></select></dd>
@@ -246,8 +314,15 @@
 
             <!--                          SOLUTIONS                     -->
             <div class="row page" id="firemission_solution" hidden>
+              <input type="hidden" class="variable" key="id">
               <div class="col-lg-7">
                 <h1><span class="variable" key="name"></span>  Solutions</h1>
+                <ul class="nav nav-tabs">
+                  <li role="presentation"><a href="#" onClick="Get('Firemission.tabs', 'setup')">Setup</a></li>
+                  <li role="presentation"><a href="#" onClick="Get('Firemission.tabs', 'engagement')">Engagement</a></li>
+                  <li role="presentation" class="active"><a href="#" onClick="Get('Firemission.tabs', 'solutions')">Solutions</a></li>
+                </ul>
+                <!--<button class="btn pull-left" onClick="Get('Firemission.back')">Back</button >-->
                 <table class="table">
                   <thead>
                     <tr>
@@ -258,8 +333,8 @@
                       <th>Shell</th>
                       <th>Fuze</th>
                       <th>Charge</th>
-                      <th>QD</th>
                       <th>AZ</th>
+                      <th>QD</th>
                       <th>TOF</th>
                     </tr>
                   </thead>
@@ -269,18 +344,18 @@
                 <div class="col-xs-12 danger-close" hidden>
                   <button class="btn btn-danger btn-block">WARNING: DANGER CLOSE <span class="danger-close-units"></span></button><br/>
                 </div>
-                <button class="btn btn-primary" disabled>Send datalink orders</button>
+                <button class="btn btn-primary" onClick="Post('Firemission.datalink')">Send datalink orders</button>
                 <hr>
                 <div class="row">
                   <div class="col-md-4 shot-timer">
-                    <button class="btn btn-primary btn-block" onClick="startTimer('shot', this)">Shot</button><br/>
+                    <button class="btn btn-primary btn-block" onClick="Get('Firemission.shot')">Shot</button><br/>
                     <span class="shot-clock"></span></span><br/>
                     <p class="shot-splash bg-success" hidden>SPLASH<span class="shot-t">T-10</span></p>
                   </div>
-                  <div class="col-md-4 shot-timer">
-                    <button class="btn btn-primary btn-block" onClick="startTimer('complete', this)">Rounds Complete</button><br/>
-                    <span class="shot-clock"></span><br/>
-                    <p class="shot-splash bg-success" hidden>ROUNDS COMPLETE<span class="shot-t">T-10</span></p>
+                  <div class="col-md-4 rc-timer">
+                    <button class="btn btn-primary btn-block" onClick="Get('Firemission.roundsComplete')">Rounds Complete</button><br/>
+                    <span class="rc-clock"></span><br/>
+                    <p class="rc-splash bg-success" hidden>ROUNDS COMPLETE<span class="rc-t">T-10</span></p>
                   </div>
                   <div class="col-md-4" hidden>
                     <button class="btn btn-danger btn-block">Cease Fire</button><br/>
@@ -290,7 +365,7 @@
                 <div class="row">
                   <div class="col-md-2"></div>
                   <div class="col-md-4">
-                    <button class="btn btn-primary btn-block" onClick="Get('Firemission.adjust')">Adjust</button>
+                    <button class="btn btn-primary btn-block" onClick="Get('Firemission.adjust')">Adjust/FFE</button>
                   </div>
                   <div class="col-md-4">
                     <button class="btn btn-primary btn-block" onClick="Get('Firemission.eom')">End Mission</button>
@@ -300,10 +375,12 @@
               </div>
             </div>
 
+            <!--                          FM ADJUST                     -->
             <div class="row page object" id="firemission_adjust" hidden>
               <div class="col-md-8">
                 <h1><span class="variable" key="name"></span> Adjust</h1>
-                <dl>
+                <button class="btn pull-left" onClick="Get('Firemission.back')">Back</button >
+                <dl class="adjustvars">
                   <dt>OT: </dt><dd><input type="number" value=0 class="variable" key="ot"> mils</dd>
                   <dt>AD: </dt><dd><input type="number" value=0 class="variable" key="ad"> meters</dd>
                   <dt>LR: </dt><dd><input type="number" value=0 class="variable" key="lr"> meters</dd>
@@ -320,27 +397,31 @@
               </div>
             </div>
 
-            <div class="row page" id="firemission_eom" hidden>
+            <!--                          FM EOM                     -->
+            <div class="row page object" id="firemission_eom" hidden>
               <div class="col-md-4">
-                <h1>XX0000 EOM</h1>
+                <h1><span class="variable" key="name"></span> EOM</h1>
                 <h4>EOM Action</h4>
-                <select><option>Record as Target</option><option>No Save</option></select>
+                <select class="variable" key="action"><option value="record">Record as Target</option><option>No Save</option></select>
 
                  <table class="table">
                   <thead>
-                    <tr><th>Gun #</th><th>Rounds</th><th>Type</th></tr>
+                    <tr><th>Rounds</th><th>Type</th></tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td>1</td>
-                      <td><input type="number" value=2></td>
-                      <td><select><option>HE</option></select></td>
+                      <td><input type="number" value=2  class="variable" key="adjust.shellsFired"></td>
+                      <td><input type="text" class="variable disabled" key="adjust.shell"></td>
+                    </tr>
+                    <tr>
+                      <td><input type="number" value=2  class="variable" key="ffe.shellsFired"></td>
+                      <td><input type="text" class="variable disabled" key="ffe.shell"></td>
                     </tr>
                   </tbody>
                 </table>
                 <div class="btn-toolbar">
-                    <button class="btn btn-danger">Cancel</button >
-                    <button class="btn btn-primary">Save</button >
+                    <button class="btn btn-primary" onClick="Get('Firemission.back')">Cancel</button >
+                    <button class="btn btn-danger" onClick="Post('Firemission.eom', this)">End Mission</button >
                 </div>
               </div>
             </div>

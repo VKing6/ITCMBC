@@ -27,7 +27,11 @@ View = {
         element.find('.variable').each(function() {
             key = $(this).attr('key');
             val = $(this).val();
-            obj[key] = val;
+            if($(this).attr('type') == "bool") {
+                obj[key] = (val == "true");
+            }else {
+                obj[key] = val;
+            }
         });
     },
     populate: function(element, object) {
@@ -35,12 +39,41 @@ View = {
             key = $(this).attr('key');
             val = window.objectFinder(object, key);
             if(val != null) {
-                $(this).val(val);
+                if($(this).attr('type') == "bool") {
+                    $(this).val(val.toString());
+                }else {
+                    $(this).val(val);
+                }
                 if($(this).is("span")) $(this).html(val);
             }
         });
         element.find('.variable').not('.targetMethods.variable').each(function() {
 
+        });
+        element.find('.loop').each(function() {
+            baseElement = $(this);
+            baseElement.find('.element').not('.template').remove();
+            loopKey = $(this).attr('key');
+            loopBase = objectFinder(object, loopKey);
+            $.each(loopBase ,function(index, value) {
+                console.log(index, value);
+                row = baseElement.find('.template').clone();
+                row.attr('class', row.attr('class').replace('template', ''));
+                row.find('.variable').each(function(){
+                    key = $(this).attr('key');
+                    $(this).attr('key', loopKey + '.' + index + '.' + key);
+                    $(this).val(value[key]);
+                });
+                baseElement.append(row);
+                row.show();
+            });
+        });
+        element.find('.knownpoint').each(function() {
+            baseElement = $(this);
+            baseElement.empty();
+            $.each(window.BCS.knownPoints, function(){
+                baseElement.append($('<option />').val(this.name).text(this.name));
+            });
         });
     },
     helpers: {
@@ -63,10 +96,15 @@ View = {
                 }
                 obj = obj.new();
             }
-            selector = (nested) ? '' : '.object-nested .variable';
+            selector = (nested) ? '.template .variable' : '.template .variable';
             element.find('.variable').not(selector).each(function() {
                 key = $(this).attr('key');
-                val = $(this).val();
+                val = null;
+                if($(this).attr('type') == "bool") {
+                    val = ($(this).val() == "true");
+                }else {
+                    val = $(this).val();
+                }
                 nestedPut(obj, key, val);
                 //obj[key] = val;
             });
@@ -84,6 +122,20 @@ View = {
                 obj = obj[types[i]];
             }
             obj[types[types.length - 1]] = $(element).val();
+        },
+        loadPos: function(element) {
+            base = $(element);
+            if(base.is('select')) {
+                valfield = base;
+            } else {
+                valfield = base.siblings('.' + $(element).attr('target')).eq(0);
+            }
+            pointRef = valfield.val();
+            point = BCS.knownPoints[pointRef];
+            parent = $(element).parents('.object, .object-nested');
+            console.log(point.position.mgrs_string);
+            parent.find('.mgrs').eq(0).val(point.position.mgrs_string);
+            parent.find('.elevation').eq(0).val(point.position.elev);
         }
     }
 }
@@ -126,6 +178,7 @@ function nestedPut(object, key, value) {
 
 timers = {};
 function startTimer(ref, source) {
+    console.log(source);
     if(timers[ref] != null) {
         clearInterval(timers[ref].counter);
     }

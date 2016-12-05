@@ -9,6 +9,7 @@ function Post(route, source) {
     object = View.helpers.formToModel(source);
     controller = routeSplitter(route);
     controller.post(object, source);
+    Controller.Firemission.sidebar.get();
 }
 
 function Delete(route, id) {

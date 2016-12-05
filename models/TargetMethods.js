@@ -21,14 +21,14 @@ TargetMethods = {
     Polar: {
         new: function(variables) {
             return TargetMethods.generic(variables, function() {
-                return adjustGridToGrid(this.position, this.direction, this.distance, 0, this.vi);
+                return adjustGridToGrid(this.point.position, this.direction, this.distance, 0, this.vi);
             });
         }
     },
     Shift: {
         new: function(variables) {
             return TargetMethods.generic(variables, function() {
-                return adjustGridToGrid(this.position, this.ot, this.ad, this.lr, this.ud);
+                return adjustGridToGrid(this.point.position, this.ot, this.ad, this.lr, this.ud);
             });
         }
     }

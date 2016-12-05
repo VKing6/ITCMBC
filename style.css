@@ -42,3 +42,13 @@ input.narrow {
   font-weight: bold;
   text-align: center;
 }
+
+.SHOT {
+  background-color: #4bff1e;
+  color: black;
+}
+
+.SPLASH {
+  background-color: #ff3a3a;
+  color:white;
+}

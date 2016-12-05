@@ -29,16 +29,20 @@ Firemission = {
                 guns: "All",
                 shell: "HE",
                 fuze: "Quick",
-                current: null
+                current: null,
+                shellsFired: 0,
             },
             ffe: {
                 guns: "All",
                 rounds: 1,
                 shell: "HE",
-                fuze: "Quick"
+                fuze: "Quick",
+                shellsFired: 0,
             },
             adjust_history: [],
-            solutions: {}
+            solutions: {},
+            timers: {},
+            shotstate: ''
         }
     },
     validator: Validator.new(function(object) {

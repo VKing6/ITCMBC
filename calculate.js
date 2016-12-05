@@ -39,7 +39,7 @@ function calculate(firemission) {
             solution.calcShell = solution.shell + window.BCS.options.windResistance;
         }
         firemission.solutions[gun.name] = solution;
-        if(i == 1) {
+        if(i == 1 || bty.guns.length == 1) {
             firemission.solutions.bty = solution;
             firemission.solutions.bty.piece = "bty"
             firemission.solutions.bty.targetPos = firemission.target.position;
@@ -49,7 +49,8 @@ function calculate(firemission) {
     calcBatteryPosition(firemission);
     setSheafTargets(firemission);
     fillSolutions(firemission);
-    console.log(firemission);
+    isDangerClose(firemission);
+    //console.log(firemission);
     return firemission;
 }
 
@@ -71,8 +72,9 @@ function setSheafTargets(firemission) {
     sheafDir = sheaf.direction;
     batteryPos = firemission.solutions.bty.position;
     target = firemission.target.position;
-    if (sheaf.type != 'special' && sheaf.quick == 'true') {
-        sheafDir = calcDirection(batteryPos, target) / 360 * 6400;
+    if (sheaf.quick == 'true') {
+        sheafDir = calcDirection(batteryPos.mgrs, target.mgrs) / 360 * 6400;
+        //console.log(sheafDir);
     }
 
     bty = window.BCS.battery;
@@ -86,9 +88,9 @@ function setSheafTargets(firemission) {
                 break;
             case "special":
                 {
-                    var guns = calculateController.guns.length;
-                    WidthPerGun = sheaf.getLength() / guns;
-                    var halfSheaf = sheaf.getLength() / 2;
+                    var guns = bty.guns.length;
+                    WidthPerGun = sheaf.length / guns;
+                    var halfSheaf = sheaf.length / 2;
                     offset = (i+1) * WidthPerGun - (WidthPerGun / 2) - halfSheaf;
                     gunTarget = adjustGridToGrid(gunTarget, sheafDir, 0, offset, 0, 0);
                 }
@@ -109,11 +111,11 @@ function fillSolutions(firemission) {
     keys = Object.keys(firemission.solutions);
     for (var i = 0; i < keys.length; i++) {
         solution = firemission.solutions[keys[i]];
-        console.log('PROCESSING:', solution);
+        //console.log('PROCESSING:', solution);
         results = getSolutions(solution);
         quads = null;
         if(solution.charge == "Auto") {
-            for (var j = 0; j < results.quadrants.length; j++) {
+            for (var j = results.quadrants.length - 1; j >= 0; j--) {
                 res = results.quadrants[j]
                 if(res != null) 
                 {
@@ -128,7 +130,7 @@ function fillSolutions(firemission) {
         solution.az = Math.round(results.azimuth);
         solution.qd = quads.qd;
         solution.tof = quads.tof;
-        console.log('PROCESSED', solution);
+        //console.log('PROCESSED', solution);
     }
 }
 
@@ -149,7 +151,7 @@ function getBatteryPosition(guns) {
  * Gets solution for a gun with a round between two positions
  */
 function getSolutions(solutionBase) {
-    console.log(solutionBase);
+    //console.log(solutionBase);
     var distance = calcDistance(solutionBase.sourcePos.mgrs, solutionBase.targetPos.mgrs);
     var azimuth = calcDirection(solutionBase.sourcePos.mgrs, solutionBase.targetPos.mgrs);
     var solutions = calcQuadrants(solutionBase.type, solutionBase.calcShell, distance, solutionBase.targetPos.elev - solutionBase.sourcePos.elev);
@@ -198,7 +200,7 @@ function QuadrantFromRange(table, distance, elevDiff) {
         var subElev = highElev + (lowElev - highElev) / difference * substep;
         var adjElev = subElev * (elevDiff / 100)    * -1;
         qd = qd + adjElev;
-        console.log('qd', elevDiff);
+        //console.log('qd', elevDiff);
         return {'qd' : Math.round(qd), 'tof' : table[low].tof};
     }else{
         return null;
@@ -290,9 +292,9 @@ function isInRange(target, positions, distance) {
     for (var i = keys.length - 1; i >= 0; i--) {
         point = positions[keys[i]];
         if(point.friendly == "true") {
-            console.log('checking', dist, target, point);
+            //console.log('checking', dist, target, point);
             var dist = calcDistance(target.mgrs, point.position.mgrs);
-            console.log(dist);
+            //console.log(dist);
             if(dist < distance) {
                 dangerClose(keys[i]);
                 noDanger = false;
@@ -312,4 +314,27 @@ function pad(base, length, before) {
         }
     }
     return base;
+}
+
+
+function isDangerClose(firemission) {
+    $('.danger-close-units').html('');
+    $('.danger-close').hide();
+    //console.log("DC CHECK");
+    target = firemission.target.position;
+    pointStores = window.BCS.knownPoints;
+    var keys = Object.keys(pointStores);
+    noDanger = true;
+    for (var i = keys.length - 1; i >= 0; i--) {
+        ////console.log(i, point.friendly);
+        point = pointStores[keys[i]];
+        if(point.friendly == true || point.friendly == "true") {
+            var dist = calcDistance(target.mgrs, point.position.mgrs);
+            if(dist < 600) {
+                $('.danger-close-units').html($('.danger-close-units').html() + ' ' + keys[i]);
+                $('.danger-close').show();
+                noDanger = false;
+            }
+        }
+    }
 }
