@@ -14,18 +14,17 @@ function CalcQuadrants(gun, round, distance, heightDelta) {
     if (weapon.tableType == "ATAB") {
 
         if (Object.keys(weapon.roundTypes).length == 1) {
-            round = weapon.roundTypes[0];
+            round = "all";
         }
 
         var tables = weapon.roundTypes[round].tables
         var charges = Object.keys(tables);
         var angles = weapon.angles;
-
         var solutions = [];
         // Assume only mortars. TODO: Add low angle support
         for (var i = charges.length - 1; i >= 0; i--) {
             var ballistics = tables[i];
-            var solution = (SolutionFromATAB(ballistics, distance, heightDelta, angles["high"][0], angles["high"][1]))
+            var solution = (SolutionFromATAB(ballistics, distance, heightDelta, angles["high"][0], angles["high"][1]));
             if (solution == []) {
                 solutions.push(null);
             } else {
@@ -62,12 +61,12 @@ function CalcQuadrants(gun, round, distance, heightDelta) {
  *
  **/
 function SolutionFromATAB(ballistics, distance, heightDelta, elevRowLow, elevRowHigh) {
-    var table = ballistics["btab"];
-    var rangeMin = ballistics["minRange"];
-    var rangeMax = ballistics["maxRange"];
-    var heightMin = ballistics["minHeight"];
-    var heightMax = ballistics["maxHeight"];
-    var heightStep = ballistics["hstep"];
+    table = ballistics["btab"];
+    rangeMin = ballistics["minRange"];
+    rangeMax = ballistics["maxRange"];
+    heightMin = ballistics["minHeight"];
+    heightMax = ballistics["maxHeight"];
+    heightStep = ballistics["hstep"];
 
     var solution = []
 
@@ -77,8 +76,8 @@ function SolutionFromATAB(ballistics, distance, heightDelta, elevRowLow, elevRow
     }
 
     // Find the over/under solution columns
-    var heightIndexLower = Math.floor((heightDelta - heighMin) / heightStep);
-    var heightIndexHigher = Math.ceil((heightDelta - heightMin) / heightStep)
+    heightIndexLower = Math.floor((heightDelta - heightMin) / heightStep);
+    heightIndexHigher = Math.ceil((heightDelta - heightMin) / heightStep)
 
     // If the solution is on a column boundry
     if (heightIndexHigher == heightIndexLower) {
@@ -86,25 +85,25 @@ function SolutionFromATAB(ballistics, distance, heightDelta, elevRowLow, elevRow
     }
 
     // Interpolation factor
-    var heightFactor = ((heightDelta - heightMin) - heightIndexLower * heightStep) /
-                       (heightIndexHigher * heightStep - heightIndexLower * heightStep);
+   heightFactor = ((heightDelta - heightMin) - heightIndexLower * heightStep) /
+                  (heightIndexHigher * heightStep - heightIndexLower * heightStep);
 
-    var distanceNearest = 99999999;
-    var elevNearestRow = -1;
-    var elevNextNearestRow = -1;
-    var sliceNextNearest = [];
+   distanceNearest = 99999999;
+   elevNearestRow = -1;
+   elevNextNearestRow = -1;
+   sliceNextNearest = [];
 
     // Find closest elevation solution in the table
-    for (var i = elevRowLow; i <= elevRowHigh; i++) {
-        var prevSliceCount = (table[i-1][2]).length;
-        var slices = table[i][2];
-        var nextSliceCount = (table[i+1][2]).length;
+    for (var i = elevRowLow + 1; i <= elevRowHigh - 1; i++) {
+        prevSliceCount = (getSlice(table, i-1)[2]).length;
+        slices = getSlice(table, i)[2];
+        nextSliceCount = (getSlice(table, i+1)[2]).length;
 
         if (slices.length > heightIndexHigher && prevSliceCount > heightIndexHigher && nextSliceCount > heightIndexHigher) {
-            var sliceLow = slices[heightIndexLower];
-            var sliceHigh = slices[heightIndexHigher];
-            var testSlice = InterpolateSlices(sliceLow, sliceHigh, heightFactor);
-            var testDist = testSlice[0];
+            sliceLow = slices[heightIndexLower];
+            sliceHigh = slices[heightIndexHigher];
+            testSlice = InterpolateSlices(sliceLow, sliceHigh, heightFactor);
+            testDist = testSlice[0];
 
             if (Math.abs(testDist - distance) < distanceNearest) {
                 distanceNearest = Math.abs(testDist - distance);
@@ -114,13 +113,13 @@ function SolutionFromATAB(ballistics, distance, heightDelta, elevRowLow, elevRow
     }
 
     // Find the nearest neighboring solutions
-    var sliceNearestLowerBase = table[elevNearestRow-1][2];
-    var sliceNearestLower = InterpolateSlices(sliceNearestLowerBase[heightIndexLower], sliceNearestLowerBase[heightIndexHigher], heightFactor);
-    var sliceNearestHigherBase = table[elevNearestRow+1][2];
-    var sliceNearestHigher = InterpolateSlices(sliceNearestHigherBase[heightIndexLower], sliceNearestHigherBase[heightIndexHigher], heightFactor);
+    sliceNearestLowerBase = getSlice(table, elevNearestRow-1)[2];
+    sliceNearestLower = InterpolateSlices(sliceNearestLowerBase[heightIndexLower], sliceNearestLowerBase[heightIndexHigher], heightFactor);
+    sliceNearestHigherBase = getSlice(table, elevNearestRow+1)[2];
+    sliceNearestHigher = InterpolateSlices(sliceNearestHigherBase[heightIndexLower], sliceNearestHigherBase[heightIndexHigher], heightFactor);
 
-    var distanceNearestLower = sliceNearestLower[0];
-    var distanceNearestHigher = sliceNearestHigher[0];
+    distanceNearestLower = sliceNearestLower[0];
+    distanceNearestHigher = sliceNearestHigher[0];
     if (Math.abs(distanceNearestLower - distance) < Math.abs(distanceNearestHigher - distance)) {
         elevNextNearestRow = elevNearestRow - 1;
         sliceNextNearest = sliceNearestLower;
@@ -135,18 +134,18 @@ function SolutionFromATAB(ballistics, distance, heightDelta, elevRowLow, elevRow
         return [];
     }
 
-    var sliceNearestBase = table[elevNearestRow][2];
-    var sliceNearest = InterpolateSlices(sliceNearestBase[heightIndexLower], sliceNearestBase[heightIndexHigher], heightFactor);
+    sliceNearestBase = getSlice(table,elevNearestRow)[2];
+    sliceNearest = InterpolateSlices(sliceNearestBase[heightIndexLower], sliceNearestBase[heightIndexHigher], heightFactor);
 
-    var distanceFactor = (distance - sliceNearest[0]) / (sliceNextNearest[0] - sliceNearest[0]);
+    distanceFactor = (distance - sliceNearest[0]) / (sliceNextNearest[0] - sliceNearest[0]);
 
     // Find the actual elevations
-    var elevNearest = table[elevNearestRow][0];
-    var elevNextNearest = table[elevNextNearestRow][0];
+    elevNearest = getSlice(table,elevNearestRow)[0];
+    elevNextNearest = getSlice(table,elevNextNearestRow)[0];
 
     // Find maximum ordnance
-    var maxOrdNearest = table[elevNearestRow][1];
-    var maxOrdNextNearest = table[elevNextNearestRow][1];
+    maxOrdNearest = getSlice(table,elevNearestRow)[1];
+    maxOrdNextNearest = getSlice(table,elevNextNearestRow)[1];
 
 
     if (table[0].length >= 7) {
@@ -164,4 +163,10 @@ function SolutionFromATAB(ballistics, distance, heightDelta, elevRowLow, elevRow
     }
     return {"qd": Math.round(solution[0]*17.77777778), "tof": solution[2], "impactVel": solution[4], "impactAngle": solution[5], "maxOrd": solution[6]};
 
+}
+
+function getSlice(table, angle) {
+    for (var i = table.length - 1; i >= 0; i--) {
+        if(table[i][0] == angle) return table[i];
+    }
 }

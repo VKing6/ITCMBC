@@ -32,8 +32,8 @@ function calculate(firemission) {
                 });
             }
         }
-        if(solution.type == "mortar_82") {
-            solution.calcShell = "all" + window.BCS.options.windResistance;
+        if(solution.type == "mortar_82" || solution.type == "mortar_81") {
+            solution.calcShell = "all";
         } else {
             solution.calcShell = solution.shell;
         }
@@ -110,15 +110,14 @@ function fillSolutions(firemission) {
     keys = Object.keys(firemission.solutions);
     for (var i = 0; i < keys.length; i++) {
         solution = firemission.solutions[keys[i]];
-        //console.log('PROCESSING:', solution);
         results = getSolutions(solution);
         quads = null;
         if(solution.charge == "Auto") {
             for (var j = results.quadrants.length - 1; j >= 0; j--) {
-                res = results.quadrants[j]
-                if(res != null)
+                res = results.quadrants[j];
+                if(res != null && res.qd != null)
                 {
-                    quads = results.quadrants[j];
+                    quads = res;
                     solution.displayCharge = j;
                 }
             }
@@ -127,8 +126,10 @@ function fillSolutions(firemission) {
             solution.displayCharge = solution.charge;
         }
         solution.az = Math.round(results.azimuth);
-        solution.qd = quads.qd;
-        solution.tof = quads.tof;
+        solution.qd = Math.round(quads.qd);
+        solution.tof = Math.round(quads.tof);
+        solution.impAngle = Math.round(quads.impactAngle);
+        solution.maxOrd = Math.round(quads.maxOrd);
         //console.log('PROCESSED', solution);
     }
 }
@@ -153,7 +154,7 @@ function getSolutions(solutionBase) {
     //console.log(solutionBase);
     var distance = calcDistance(solutionBase.sourcePos.mgrs, solutionBase.targetPos.mgrs);
     var azimuth = calcDirection(solutionBase.sourcePos.mgrs, solutionBase.targetPos.mgrs);
-    var solutions = calcQuadrantsRTAB(solutionBase.type, solutionBase.calcShell, distance, solutionBase.targetPos.elev - solutionBase.sourcePos.elev);
+    var solutions = CalcQuadrants(solutionBase.type, solutionBase.calcShell, distance, solutionBase.targetPos.elev - solutionBase.sourcePos.elev);
     return {'azimuth' : azimuth / 360 * 6400, 'distance' : distance, 'quadrants' : solutions};
 }
 
@@ -165,12 +166,12 @@ function getSolutions(solutionBase) {
  * distance: distance in m
  * elevDiff: elev Difference in m
  */
-function calcQuadrantsRTAB(gun, round, distance, elevDiff) {
-    var charges = tables[gun][round].charges;
+function alcQuadrantsRTAB(gun, round, distance, elevDiff) {
+    var charges = weapons[gun].roundTypes[round].charges;
     var res = [];
     for (var i = charges.length - 1; i >= 0; i--) {
         var charge = charges[i];
-        qds = QuadrantFromRange(tables[gun][round][charge], distance, elevDiff);
+        qds = QuadrantFromRange(weapons[gun], round, distance, elevDiff);
         if(qds != null) res[i] = qds;
     }
     return res;

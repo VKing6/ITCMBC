@@ -52,13 +52,13 @@ Controller.Firemission = {
             firemission = window.BCS.firemissions[object.id];
             firemission = $.extend(true, firemission, object);
             if(Firemission.validator.validate(firemission)) {
-                try {
+            //    try {
                     window.BCS.firemissions[firemission.id] = firemission;
                     Controller.Firemission.solutions.get(firemission.id);
                     firemission.state = "solutions";
-                } catch(err) {
-                    View.flash(err);
-                }
+            //    } catch(err) {
+            //        View.flash(err);
+            //    }
             }else{
                 View.flash(Firemission.validator.errors);
             }

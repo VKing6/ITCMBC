@@ -29,13 +29,15 @@
     <script src="controller\BCS.js"></script>
 
 
-    <script src="tables\atab_81\all_ch0.js"></script>
-    <script src="tables\atab_81\all_ch1.js"></script>
-    <script src="tables\atab_81\all_ch2.js"></script>
-    <script src="tables\atab_81\all_ch3.js"></script>
-    <script src="tables\atab_81\all_ch4.js"></script>
-    <script src="tables\tables.js"></script>
-    
+    <script src="tables\mortar_81\mortar_81_all_ch0.js"></script>
+    <script src="tables\mortar_81\mortar_81_all_ch1.js"></script>
+    <script src="tables\mortar_81\mortar_81_all_ch2.js"></script>
+    <script src="tables\mortar_81\mortar_81_all_ch3.js"></script>
+    <script src="tables\mortar_81\mortar_81_all_ch4.js"></script>
+    <script src="tables\mortar_82\mortar_82.js"></script>
+    <script src="tables\weapons.js"></script>
+    <script src="ATAB.js"></script>
+
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -117,6 +119,7 @@
                       <dt>Battery Callsign: </dt>  <dd><input type="text" class="variable" key="callsign"></dd>
                       <dt>Gun Type: </dt>  <dd><select class="variable" key="type">
                             <option value="mortar_82">Mk6</option>
+                            <option value="mortar_81">L16</option>
                           </select></dd>
                     </dl>
                     <table class="table">
@@ -269,6 +272,8 @@
                     <option>0</option>
                     <option>1</option>
                     <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
                   </select></dd>
                 </dl>
                 <hr>
@@ -346,9 +351,13 @@
                       <th>TOF</th>
                     </tr>
                   </thead>
-                  <tbody class="solutions">
+                  <tbody class="solutions" key="solutions.bty.maxOrd">
                   </tbody>
                 </table>
+                <dl>
+                  <dt>MAXIMUM ORDINATE: </dt><dd><span class="variable" key="solutions.bty.maxOrd"></span></dd>
+                  <dt>IMPACT ANGLE: </dt><dd><span class="variable" key="solutions.bty.impAngle"></span></dd>
+                </dl>
                 <div class="col-xs-12 danger-close" hidden>
                   <button class="btn btn-danger btn-block">WARNING: DANGER CLOSE <span class="danger-close-units"></span></button><br/>
                 </div>
