@@ -27,7 +27,15 @@
     <script src="controller\Route.js"></script>
     <script src="controller\Firemission.js"></script>
     <script src="controller\BCS.js"></script>
+
+
+    <script src="tables\atab_81\all_ch0.js"></script>
+    <script src="tables\atab_81\all_ch1.js"></script>
+    <script src="tables\atab_81\all_ch2.js"></script>
+    <script src="tables\atab_81\all_ch3.js"></script>
+    <script src="tables\atab_81\all_ch4.js"></script>
     <script src="tables\tables.js"></script>
+    
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -107,19 +115,19 @@
                   <p>
                     <dl>
                       <dt>Battery Callsign: </dt>  <dd><input type="text" class="variable" key="callsign"></dd>
+                      <dt>Gun Type: </dt>  <dd><select class="variable" key="type">
+                            <option value="mortar_82">Mk6</option>
+                          </select></dd>
                     </dl>
                     <table class="table">
                       <thead>
-                        <tr><th>Gun #</th><th>Position</th><th>Elevation</th><th>Type</th><th><button class="btn btn-xs btn-primary" onClick="Controller.BCS.battery.printGun()"><i class="fa fa-plus"></i></button></th></tr>
+                        <tr><th>Gun #</th><th>Position</th><th>Elevation</th><th><button class="btn btn-xs btn-primary" onClick="Controller.BCS.battery.printGun()"><i class="fa fa-plus"></i></button></th></tr>
                       </thead>
                       <tbody id="gun_list">
                         <tr id="gun_template" class="object object-nested gun" hidden>
                           <td><input type="text" value="" class="narrow variable" key="name"></td>
                           <td><input type="text" value="" class="variable" key="position.mgrs_string"></td>
                           <td><input type="text" value="" class="variable" key="position.elev"></td>
-                          <td><select class="variable" key="type">
-                            <option value="mortar_82">Mk6</option>
-                          </select></td>
                           <td><button class="btn btn-xs btn-danger" onClick="Controller.BCS.battery.deleteGun(this)"><i class="fa fa-minus"></i></button></td>
                         </tr>
                       </tbody>

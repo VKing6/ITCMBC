@@ -8,7 +8,7 @@ Gun = {
     },
     validator: Validator.new(function(object) {
         this.handleErrorBool(!Position.validator.validate(object.position), 'Position: ' + Position.validator.errors);
-        this.handleErrorBool(!Gun.types.includes(object.type), 'Gun type is not valid');
+        //this.handleErrorBool(!Gun.types.includes(object.type), 'Gun type is not valid');
     }),
-    types: "mortar_82"
+    //types: "mortar_82"
 }
