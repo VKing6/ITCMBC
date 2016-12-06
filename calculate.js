@@ -7,7 +7,7 @@ function calculate(firemission) {
         solution = {
             piece: gun.name,
             targetPos:null,
-            type: gun.type,
+            type: bty.type,
             mof: firemission.engagement.mof,
             moc: firemission.engagement.moc,
             rounds: firemission.ffe.rounds,
