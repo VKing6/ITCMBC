@@ -166,7 +166,7 @@ function getSolutions(solutionBase) {
  * distance: distance in m
  * elevDiff: elev Difference in m
  */
-function alcQuadrantsRTAB(gun, round, distance, elevDiff) {
+function CalcQuadrantsRTAB(gun, round, distance, elevDiff) {
     var charges = weapons[gun].roundTypes[round].charges;
     var res = [];
     for (var i = charges.length - 1; i >= 0; i--) {
