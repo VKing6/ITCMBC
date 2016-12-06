@@ -117,7 +117,7 @@ function fillSolutions(firemission) {
         if(solution.charge == "Auto") {
             for (var j = results.quadrants.length - 1; j >= 0; j--) {
                 res = results.quadrants[j]
-                if(res != null) 
+                if(res != null)
                 {
                     quads = results.quadrants[j];
                     solution.displayCharge = j;
@@ -154,7 +154,7 @@ function getSolutions(solutionBase) {
     //console.log(solutionBase);
     var distance = calcDistance(solutionBase.sourcePos.mgrs, solutionBase.targetPos.mgrs);
     var azimuth = calcDirection(solutionBase.sourcePos.mgrs, solutionBase.targetPos.mgrs);
-    var solutions = calcQuadrants(solutionBase.type, solutionBase.calcShell, distance, solutionBase.targetPos.elev - solutionBase.sourcePos.elev);
+    var solutions = calcQuadrantsRTAB(solutionBase.type, solutionBase.calcShell, distance, solutionBase.targetPos.elev - solutionBase.sourcePos.elev);
     return {'azimuth' : azimuth / 360 * 6400, 'distance' : distance, 'quadrants' : solutions};
 }
 
@@ -166,7 +166,7 @@ function getSolutions(solutionBase) {
  * distance: distance in m
  * elevDiff: elev Difference in m
  */
-function calcQuadrants(gun, round, distance, elevDiff) {
+function calcQuadrantsRTAB(gun, round, distance, elevDiff) {
     var charges = tables[gun][round].charges;
     var res = [];
     for (var i = charges.length - 1; i >= 0; i--) {
@@ -179,7 +179,7 @@ function calcQuadrants(gun, round, distance, elevDiff) {
 
 /**
  * table: json table of charge
- * 
+ *
  */
 function QuadrantFromRange(table, distance, elevDiff) {
     var low = Math.floor(distance / 50) * 50;
@@ -204,7 +204,7 @@ function QuadrantFromRange(table, distance, elevDiff) {
         return {'qd' : Math.round(qd), 'tof' : table[low].tof};
     }else{
         return null;
-    }            
+    }
 }
 
 /*======================================Adjust======================================*/

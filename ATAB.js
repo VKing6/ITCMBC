@@ -8,6 +8,38 @@ function InterpolateSlices(sliceLow, sliceHigh, factor) {
     return ret;
 }
 
+
+function CalcQuadrants(gun, round, distance, heightDelta) {
+    var weapon = weapons[gun];
+    if (weapon.tableType == "ATAB") {
+
+        if (Object.keys(weapon.roundTypes).length == 1) {
+            round = weapon.roundTypes[0];
+        }
+
+        var tables = weapon.roundTypes[round].tables
+        var charges = Object.keys(tables);
+        var angles = weapon.angles;
+
+        var solutions = [];
+        // Assume only mortars. TODO: Add low angle support
+        for (var i = charges.length - 1; i >= 0; i--) {
+            var ballistics = tables[i];
+            var solution = (SolutionFromATAB(ballistics, distance, heightDelta, angles["high"][0], angles["high"][1]))
+            if (solution == []) {
+                solutions.push(null);
+            } else {
+                solutions.push(solution);
+            }
+        }
+        return solutions;
+    } else if (weapon.tableType == "RTAB") {
+        return CalcQuadrantsRTAB(gun, round, distance, heightDelta);
+    } else {
+        // Throw error: tableType Undefined
+    }
+}
+
 /**
  * Find quadrant from ACE-style BTAB (ATAB) for a certain charge
  * (depending on which ballistics table is given)
@@ -29,7 +61,7 @@ function InterpolateSlices(sliceLow, sliceHigh, factor) {
  * 5:  Impact angle
  *
  **/
-function SolutionFromATAB(ballistics, distance, hightDelta, elevRowLow, elevRowHigh) {
+function SolutionFromATAB(ballistics, distance, heightDelta, elevRowLow, elevRowHigh) {
     var table = ballistics[0];
     var rangeMin = ballistics[1];
     var rangeMax = ballistics[2];
@@ -40,13 +72,13 @@ function SolutionFromATAB(ballistics, distance, hightDelta, elevRowLow, elevRowH
     var solution = []
 
     // Check if height difference is within table extremes
-    if (hightDelta < heightMin || hightDelta > heightMax) {
+    if (heightDelta < heightMin || heightDelta > heightMax) {
         return [];
     }
 
     // Find the over/under solution columns
-    var heightIndexLower = Math.floor((hightDelta - heighMin) / heightStep);
-    var heightIndexHigher = Math.ceil((hightDelta - heightMin) / heightStep)
+    var heightIndexLower = Math.floor((heightDelta - heighMin) / heightStep);
+    var heightIndexHigher = Math.ceil((heightDelta - heightMin) / heightStep)
 
     // If the solution is on a column boundry
     if (heightIndexHigher == heightIndexLower) {
@@ -54,7 +86,7 @@ function SolutionFromATAB(ballistics, distance, hightDelta, elevRowLow, elevRowH
     }
 
     // Interpolation factor
-    var heightFactor = ((hightDelta - heightMin) - heightIndexLower * heightStep) /
+    var heightFactor = ((heightDelta - heightMin) - heightIndexLower * heightStep) /
                        (heightIndexHigher * heightStep - heightIndexLower * heightStep);
 
     var distanceNearest = 99999999;
@@ -126,6 +158,6 @@ function SolutionFromATAB(ballistics, distance, hightDelta, elevRowLow, elevRowH
             distanceFactor
         );
     }
-    return solution;
+    return {"qd": Math.round(solution[0]*17.77777778), "tof": solution[2], "impactVel": solution[4], "impactAngle": solution[5]};
 
 }
