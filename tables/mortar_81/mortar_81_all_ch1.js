@@ -1,4 +1,4 @@
-all_81_btab_ch1 = {
+var mortar_81_all_ch1 = {
      "minHeight": -2000,
      "maxHeight": 2000,
      "hstep": 100,

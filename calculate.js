@@ -32,11 +32,10 @@ function calculate(firemission) {
                 });
             }
         }
-        if(solution.type == "mortar_82")
-        {
+        if(solution.type == "mortar_82") {
             solution.calcShell = "all" + window.BCS.options.windResistance;
-        }else{
-            solution.calcShell = solution.shell + window.BCS.options.windResistance;
+        } else {
+            solution.calcShell = solution.shell;
         }
         firemission.solutions[gun.name] = solution;
         if(i == 1 || bty.guns.length == 1) {

@@ -9,7 +9,7 @@ var weapons = {
             "all": {
                 "tables": {
                     0: mortar_81_all_ch0,
-                    1: mortar_81_all_ch4,
+                    1: mortar_81_all_ch1,
                     2: mortar_81_all_ch2,
                     3: mortar_81_all_ch3,
                     4: mortar_81_all_ch4

@@ -62,12 +62,12 @@ function CalcQuadrants(gun, round, distance, heightDelta) {
  *
  **/
 function SolutionFromATAB(ballistics, distance, heightDelta, elevRowLow, elevRowHigh) {
-    var table = ballistics[0];
-    var rangeMin = ballistics[1];
-    var rangeMax = ballistics[2];
-    var heightMin = ballistics[3];
-    var heightMax = ballistics[4];
-    var heightStep = ballistics[5];
+    var table = ballistics["btab"];
+    var rangeMin = ballistics["minRange"];
+    var rangeMax = ballistics["maxRange"];
+    var heightMin = ballistics["minHeight"];
+    var heightMax = ballistics["maxHeight"];
+    var heightStep = ballistics["hstep"];
 
     var solution = []
 
@@ -144,6 +144,10 @@ function SolutionFromATAB(ballistics, distance, heightDelta, elevRowLow, elevRow
     var elevNearest = table[elevNearestRow][0];
     var elevNextNearest = table[elevNextNearestRow][0];
 
+    // Find maximum ordnance
+    var maxOrdNearest = table[elevNearestRow][1];
+    var maxOrdNextNearest = table[elevNextNearestRow][1];
+
 
     if (table[0].length >= 7) {
         // Ignore rocket stuff
@@ -151,13 +155,13 @@ function SolutionFromATAB(ballistics, distance, heightDelta, elevRowLow, elevRow
     } else {
         // Interpolate solution
         solution = InterpolateSlices(
-            [elevNearest, sliceNearest[0], sliceNearest[2], sliceNearest[1], sliceNearest[3], sliceNearest[4]
+            [elevNearest, sliceNearest[0], sliceNearest[2], sliceNearest[1], sliceNearest[3], sliceNearest[4], maxOrdNearest
             ],
-            [elevNextNearest, sliceNextNearest[0], sliceNextNearest[2], sliceNextNearest[1], sliceNextNearest[3], sliceNextNearest[4]
+            [elevNextNearest, sliceNextNearest[0], sliceNextNearest[2], sliceNextNearest[1], sliceNextNearest[3], sliceNextNearest[4], maxOrdNextNearest
             ],
             distanceFactor
         );
     }
-    return {"qd": Math.round(solution[0]*17.77777778), "tof": solution[2], "impactVel": solution[4], "impactAngle": solution[5]};
+    return {"qd": Math.round(solution[0]*17.77777778), "tof": solution[2], "impactVel": solution[4], "impactAngle": solution[5], "maxOrd": solution[6]};
 
 }
