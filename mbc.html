@@ -335,11 +335,10 @@
                   <li role="presentation"><a href="#" onClick="Get('Firemission.tabs', 'engagement')">Engagement</a></li>
                   <li role="presentation" class="active"><a href="#" onClick="Get('Firemission.tabs', 'solutions')">Solutions</a></li>
                 </ul>
-                <!--<button class="btn pull-left" onClick="Get('Firemission.back')">Back</button >-->
                 <table class="table">
                   <thead>
                     <tr>
-                      <th>Gun #</th>
+                      <th>Gun</th>
                       <th>MOF</th>
                       <th>MOC</th>
                       <th>Rounds</th>
@@ -354,9 +353,11 @@
                   <tbody class="solutions" key="solutions.bty.maxOrd">
                   </tbody>
                 </table>
+                <button class="btn pull-right" onClick="Get('Firemission.solutions.next')"><i class="fa fa-sm fa-angle-right"></i></button>
+                <button class="btn pull-right" onClick="Get('Firemission.solutions.prev')"><i class="fa fa-sm fa-angle-left"></i></button>
                 <dl>
-                  <dt>MAXIMUM ORDINATE: </dt><dd><span class="variable" key="solutions.bty.maxOrd"></span></dd>
-                  <dt>IMPACT ANGLE: </dt><dd><span class="variable" key="solutions.bty.impAngle"></span></dd>
+                  <dt>MAXIMUM ORDINATE: </dt><dd><span class="variable maxOrd" key="solutions.bty.maxOrd"></span></dd>
+                  <dt>IMPACT ANGLE: </dt><dd><span class="variable impAngle" key="solutions.bty.impAngle"></span></dd>
                 </dl>
                 <div class="col-xs-12 danger-close" hidden>
                   <button class="btn btn-danger btn-block">WARNING: DANGER CLOSE <span class="danger-close-units"></span></button><br/>

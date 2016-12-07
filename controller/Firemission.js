@@ -83,6 +83,15 @@ Controller.Firemission = {
             firemission = window.BCS.firemissions[id];
             firemission = window.calculate(firemission);
             guns = window.BCS.battery.guns;
+            this.printSolution(firemission.solutions.bty.firstCharge);
+
+            firemission.state = 'solutions';
+            View.open('firemission_solution', firemission);
+        },
+        printSolution: function(num) {
+            id = Controller.Firemission.current;
+            firemission = window.BCS.firemissions[id];
+            firemission.solutions.bty.curCharge = num;
             $('#firemission_solution .solutions').empty();
             for (var i = 0; i < guns.length; i++) {
                 solution = firemission.solutions[guns[i].name];
@@ -93,17 +102,39 @@ Controller.Firemission = {
                     '<td>' + solution.rounds + '</td>' +
                     '<td>' + solution.shell + '</td>' +
                     '<td>' + solution.fuze + '</td>' +
-                    '<td>' + solution.displayCharge + '</td>' +
+                    '<td>' + solution.quadrants[num].displayCharge + '</td>' +
                     '<td>' + solution.az + '</td>' +
-                    '<td>' + solution.qd + '</td>' +
-                    '<td>' + solution.tof + '</td>' +
+                    '<td>' + solution.quadrants[num].qd + '</td>' +
+                    '<td>' + solution.quadrants[num].tof + '</td>' +
                 '</tr>');
             }
-            firemission.state = 'solutions';
-            View.open('firemission_solution', firemission);
+            $('#firemission_solution .maxOrd').html(firemission.solutions.bty.quadrants[num].maxOrd);
+            $('#firemission_solution .impAngle').html(firemission.solutions.bty.quadrants[num].impAngle);
         },
         post: function() {
 
+        },
+        prev: {
+            get: function() {
+                id = Controller.Firemission.current;
+                firemission = window.BCS.firemissions[id];
+                num = firemission.solutions.bty.curCharge;
+                if(firemission.solutions.bty.quadrants[num - 1] != null)
+                {
+                    Controller.Firemission.solutions.printSolution(num - 1);
+                }
+            }
+        },
+        next: {
+            get: function() {
+                id = Controller.Firemission.current;
+                firemission = window.BCS.firemissions[id];
+                num = firemission.solutions.bty.curCharge;
+                if(firemission.solutions.bty.quadrants[num + 1] != null)
+                {
+                    Controller.Firemission.solutions.printSolution(num + 1);
+                }
+            }
         }
     },
     adjust: {

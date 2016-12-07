@@ -110,20 +110,27 @@ function fillSolutions(firemission) {
     keys = Object.keys(firemission.solutions);
     for (var i = 0; i < keys.length; i++) {
         solution = firemission.solutions[keys[i]];
+        solution.quadrants = [];
         results = getSolutions(solution);
         quads = null;
+        solution.firstCharge = -1;
         if(solution.charge == "Auto") {
-            for (var j = results.quadrants.length - 1; j >= 0; j--) {
+            for (var j = 0; j < results.quadrants.length; j++) {
                 res = results.quadrants[j];
                 if(res != null && res.qd != null)
                 {
+                    if(solution.firstCharge == -1) solution.firstCharge = j;
                     quads = res;
-                    solution.displayCharge = j;
+                    solution.az = Math.round(results.azimuth);
+                    console.log(quads);
+                    solution.quadrants[j] = {};
+                    solution.quadrants[j].displayCharge = j;
+                    solution.quadrants[j].qd = Math.round(quads.qd);
+                    solution.quadrants[j].tof = Math.round(quads.tof);
+                    solution.quadrants[j].impAngle = Math.round(quads.impactAngle);
+                    solution.quadrants[j].maxOrd = Math.round(quads.maxOrd);
                 }
             }
-        } else {
-            quads = results.quadrants[parseInt(solution.charge)];
-            solution.displayCharge = solution.charge;
         }
         solution.az = Math.round(results.azimuth);
         solution.qd = Math.round(quads.qd);
