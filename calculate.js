@@ -129,6 +129,8 @@ function fillSolutions(firemission) {
                     solution.quadrants[j].tof = Math.round(quads.tof);
                     solution.quadrants[j].impAngle = Math.round(quads.impactAngle);
                     solution.quadrants[j].maxOrd = Math.round(quads.maxOrd);
+                    solution.quadrants[j].targetDist = Math.round(quads.targetDist);
+                    solution.quadrants[j].heightDelta = Math.round(quads.heightDelta);
                 }
             }
         }

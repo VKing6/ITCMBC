@@ -110,6 +110,7 @@ Controller.Firemission = {
             }
             $('#firemission_solution .maxOrd').html(firemission.solutions.bty.quadrants[num].maxOrd);
             $('#firemission_solution .impAngle').html(firemission.solutions.bty.quadrants[num].impAngle);
+            $('#firemission_solution .targetDist').html(firemission.solutions.bty.quadrants[num].targetDist);
         },
         post: function() {
 
