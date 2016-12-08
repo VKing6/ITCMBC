@@ -21,13 +21,14 @@ function CalcQuadrants(gun, round, distance, heightDelta) {
         var charges = Object.keys(atabs);
         var solutions = [];
         // Assume only mortars. TODO: Add low angle support
-        for (var i = charges.length - 1; i >= 0; i--) {
+        for (var i = 0; i < charges.length; i++) {
+            var charge = charges[i];
             var atab = atabs[i];
             var solution = SolutionFromATAB(atab, distance, heightDelta);
             if (solution == []) {
                 solutions.push(null);
             } else {
-                solutions.push(solution);
+                solutions.push($.extend(solution,{"ch": charge}));
             }
         }
         return solutions;
@@ -110,6 +111,9 @@ function SolutionFromATAB(atab, distance, heightDelta) {
             }
         }
     }
+    if (elevNearestRow < 1) {
+        return [];
+    };
 
     // Find the nearest neighboring solutions
     sliceNearestLowerBase = table[elevNearestRow-1][2];
@@ -160,6 +164,7 @@ function SolutionFromATAB(atab, distance, heightDelta) {
             distanceFactor
         );
     }
-    return {"qd": Math.round(solution[0]*17.77777778), "tof": solution[2], "impactVel": solution[4], "impactAngle": solution[5], "maxOrd": solution[6], "targetDist": solution[1], "heightDelta": solution[3]};
 
+    rs = {"qd": Math.round(solution[0]*17.77777778), "tof": solution[2], "impactVel": solution[4], "impactAngle": solution[5], "maxOrd": solution[6], "targetDist": solution[1], "heightDelta": solution[3]};
+    return rs;
 }
