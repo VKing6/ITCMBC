@@ -56,15 +56,17 @@ for [{_i=0;},{_i < count(_btab)},{_i=_i+1;}] do
 
 debugMR = _rangeMax;
 
-// Generate SQF
-_sqf = "";
-_sqf = _sqf + format ["// ARTY+ACE Module ballistics table.%1// Magazine: %2%1// Ammo: %3%1// AirFriction: %4%1// MuzzleVelocity: %5%1%1%private [""_btab"", ""_minRange"", ""_maxRange"", ""_minHeight"", ""_maxHeight"", ""_hstep""];%1%1", ToString [10], _magazine, _ammo, _airFriction, _muzzleVelocity];
-_sqf = _sqf + format ["_minHeight = %1;%2", _heightMin, ToString[10]];
-_sqf = _sqf + format ["_maxHeight = %1;%2", _heightMax, ToString[10]];
-_sqf = _sqf + format ["_hstep = %1;%2", _heightStep, ToString[10]];
-_sqf = _sqf + format ["_minRange = %1;%2", _rangeMin, ToString[10]];
-_sqf = _sqf + format ["_maxRange = %1;%2", _rangeMax, ToString[10]];
-_sqf = _sqf + format ["_btab = [%1", ToString[10]];
+// Generate JSON
+_json = "16aa_Magazine_1Rnd_105mm_HE = {";
+/*
+_json = _json + format ["// ARTY+ACE Module ballistics table.%1// Magazine: %2%1// Ammo: %3%1// AirFriction: %4%1// MuzzleVelocity: %5%1%1%private [""_btab"", ""_minRange"", ""_maxRange"", ""_minHeight"", ""_maxHeight"", ""_hstep""];%1%1", ToString [10], _magazine, _ammo, _airFriction, _muzzleVelocity];
+*/
+_json = _json + format ["%2""_minHeight"": %1,%2", _heightMin, ToString[10]];
+_json = _json + format ["""_maxHeight"": %1,%2", _heightMax, ToString[10]];
+_json = _json + format ["""_hstep"": %1,%2", _heightStep, ToString[10]];
+_json = _json + format ["""_minRange"": %1,%2", _rangeMin, ToString[10]];
+_json = _json + format ["""_maxRange"": %1,%2", _rangeMax, ToString[10]];
+_json = _json + format ["""_btab"": [%1", ToString[10]];
 for [{_i=0;},{_i < count(_btab);},{_i=_i+1;}] do
 {
     _tail = ",";
@@ -72,13 +74,13 @@ for [{_i=0;},{_i < count(_btab);},{_i=_i+1;}] do
     {
         _tail = "";
     };
-    _sqf =_sqf + format ["    %1%2%3", (_btab select _i), _tail, ToString [10] ];
+    _json =_json + format ["    %1%2%3", (_btab select _i), _tail, ToString [10] ];
 };
-_sqf = _sqf + format ["];%1%1",ToString [10]];
+_json = _json + format ["]%1%1",ToString [10]];
 
-_sqf = _sqf + format ["[_btab, _minRange, _maxRange, _minHeight, _maxHeight, _hstep]%1",ToString[10]];
+_json = _json + format ["};"];
 
 hint "0";
 
-copyToClipboard _sqf;
-FORMATTEDBTAB = _sqf;
+copyToClipboard _json;
+FORMATTEDBTAB = _json;
