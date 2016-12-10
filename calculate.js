@@ -114,24 +114,23 @@ function fillSolutions(firemission) {
         results = getSolutions(solution);
         quads = null;
         solution.firstCharge = -1;
-        if(solution.charge == "Auto") {
-            for (var j = 0; j < results.quadrants.length; j++) {
-                res = results.quadrants[j];
-                if(res != null && res.qd != null)
-                {
-                    if(solution.firstCharge == -1) solution.firstCharge = j;
-                    quads = res;
-                    solution.az = Math.round(results.azimuth);
-                    console.log(quads);
-                    solution.quadrants[j] = {};
-                    solution.quadrants[j].displayCharge = j;
-                    solution.quadrants[j].qd = Math.round(quads.qd);
-                    solution.quadrants[j].tof = Math.round(quads.tof);
-                    solution.quadrants[j].impAngle = Math.round(quads.impactAngle);
-                    solution.quadrants[j].maxOrd = Math.round(quads.maxOrd);
-                    solution.quadrants[j].targetDist = Math.round(quads.targetDist);
-                    solution.quadrants[j].heightDelta = Math.round(quads.heightDelta);
-                }
+        for (var j = 0; j < results.quadrants.length; j++) {
+            res = results.quadrants[j];
+            if(res != null && res.qd != null)
+            {
+                if(solution.firstCharge == -1) solution.firstCharge = j;
+                quads = res;
+                solution.az = Math.round(results.azimuth);
+                console.log(quads);
+                sol = {};
+                sol.displayCharge = quads.ch;
+                sol.qd = Math.round(quads.qd);
+                sol.tof = Math.round(quads.tof);
+                sol.impAngle = Math.round(quads.impactAngle);
+                sol.maxOrd = Math.round(quads.maxOrd);
+                sol.targetDist = Math.round(quads.targetDist);
+                sol.heightDelta = Math.round(quads.heightDelta);
+                solution.quadrants.push(sol);
             }
         }
         solution.az = Math.round(results.azimuth);

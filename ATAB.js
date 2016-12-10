@@ -17,17 +17,18 @@ function CalcQuadrants(gun, round, distance, heightDelta) {
             round = "all";
         }
 
-        var atabs = weapon.roundTypes[round].tables
-        var charges = Object.keys(atabs);
+        var atabs = weapon.roundTypes[round].tables;
         var solutions = [];
         // Assume only mortars. TODO: Add low angle support
-        for (var i = 0; i < charges.length; i++) {
-            var charge = charges[i];
-            var atab = atabs[i];
+        for (var i = 0; i < atabs.length; i++) {
+            var charge = atabs[i].charge;
+            var atab = atabs[i].table;
             var solution = SolutionFromATAB(atab, distance, heightDelta);
-            if (solution == []) {
+                console.log(solution);
+            if (solution == [] || solution.qd == null) {
                 solutions.push(null);
             } else {
+                solution.qd = (solution.qd + weapon.qdMod);
                 solutions.push($.extend(solution,{"ch": charge}));
             }
         }

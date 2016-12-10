@@ -35,6 +35,14 @@
     <script src="tables\mortar_81\mortar_81_all_ch3.js"></script>
     <script src="tables\mortar_81\mortar_81_all_ch4.js"></script>
     <script src="tables\mortar_82\mortar_82.js"></script>
+
+    <script src="tables\howitzer_105\howitzer_105_all_ch0_la.js"></script>
+    <script src="tables\howitzer_105\howitzer_105_all_ch1_la.js"></script>
+    <script src="tables\howitzer_105\howitzer_105_all_ch2_la.js"></script>
+    <script src="tables\howitzer_105\howitzer_105_all_ch0_ha.js"></script>
+    <script src="tables\howitzer_105\howitzer_105_all_ch1_ha.js"></script>
+    <script src="tables\howitzer_105\howitzer_105_all_ch2_ha.js"></script>
+    
     <script src="tables\weapons.js"></script>
     <script src="ATAB.js"></script>
 
@@ -120,6 +128,7 @@
                       <dt>Gun Type: </dt>  <dd><select class="variable" key="type">
                             <option value="mortar_82">Mk6</option>
                             <option value="mortar_81">L16</option>
+                            <option value="howitzer_105">L118</option>
                           </select></dd>
                     </dl>
                     <table class="table">
@@ -354,6 +363,7 @@
                   </tbody>
                 </table>
                 <button class="btn pull-right" onClick="Get('Firemission.solutions.next')"><i class="fa fa-sm fa-angle-right"></i></button>
+                <button class="btn pull-right"><span class="cur"></span>/<span class="total"></span></button>
                 <button class="btn pull-right" onClick="Get('Firemission.solutions.prev')"><i class="fa fa-sm fa-angle-left"></i></button>
                 <dl>
                   <dt>MAXIMUM ORDINATE: </dt><dd><span class="variable maxOrd" key="solutions.bty.maxOrd"></span>m AGL</dd>

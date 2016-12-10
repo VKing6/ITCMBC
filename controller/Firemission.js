@@ -83,7 +83,7 @@ Controller.Firemission = {
             firemission = window.BCS.firemissions[id];
             firemission = window.calculate(firemission);
             guns = window.BCS.battery.guns;
-            this.printSolution(firemission.solutions.bty.firstCharge);
+            this.printSolution(0);
 
             firemission.state = 'solutions';
             View.open('firemission_solution', firemission);
@@ -111,6 +111,8 @@ Controller.Firemission = {
             $('#firemission_solution .maxOrd').html(firemission.solutions.bty.quadrants[num].maxOrd);
             $('#firemission_solution .impAngle').html(firemission.solutions.bty.quadrants[num].impAngle);
             $('#firemission_solution .targetDist').html(firemission.solutions.bty.quadrants[num].targetDist);
+            $('#firemission_solution .total').html(firemission.solutions.bty.quadrants.length);
+            $('#firemission_solution .cur').html(num + 1);
         },
         post: function() {
 
@@ -274,7 +276,7 @@ Controller.Firemission = {
             if(ref == 'shot') firemission.shotState = 'SHOT';
             Get('Firemission.sidebar');
             console.log(parseInt(BCS.options.alertToSplash));
-            tof = BCS.firemissions[Controller.Firemission.current].solutions['bty'].tof;
+            tof = firemission.solutions['bty'].quadrants[firemission.solutions['bty'].curCharge].tof;
             var count=tof * 100;
             var messaged = false;
             var counter = setInterval(
