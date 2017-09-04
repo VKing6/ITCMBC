@@ -63,9 +63,22 @@ input.narrow {
   width: 100vw;
   top: 0;
   left: 0;
-  padding-right:30px;
+  padding-right:15px;
   padding-left: 15px;
 }
+
+@media(min-width:768px) {
+  #directFire {
+    position: absolute;
+    display: inline;
+    width: 100%; !important
+    top: 0;
+    left: 0;
+    padding-right:15px;
+    padding-left: 15px;
+  }
+}
+
 #directFire .gunSelect {
   width: 100%;
 }
@@ -80,8 +93,15 @@ input.narrow {
 }
 
 .ui-slider {
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 3em;
+  margin-bottom: 3em;
+}
+
+.ui-slider .ui-slider-handle {
+  -ms-touch-action: none;
+  touch-action: none;
+  width: 2.5em;
+  height: 2.5em;
 }
 
 #directFire input.center-text {
