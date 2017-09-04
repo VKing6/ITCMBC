@@ -1,3 +1,7 @@
+html, body {
+  width: 100%;
+}
+
 dl{
     width:100%;
   overflow: hidden;
@@ -51,4 +55,35 @@ input.narrow {
 .SPLASH {
   background-color: #ff3a3a;
   color:white;
+}
+
+#directFire {
+  position: absolute;
+  display: inline;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  padding-right:30px;
+  padding-left: 15px;
+}
+#directFire .gunSelect {
+  width: 100%;
+}
+
+#directFire .gunSelect button {
+  width: 50%;
+}
+
+#directFire .range {
+  width: 50%;
+  margin-left: 25%;
+}
+
+.ui-slider {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#directFire input.center-text {
+  text-align: center;
 }

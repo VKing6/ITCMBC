@@ -38,9 +38,9 @@ TargetMethods = {
     },
     QuickLay: {
         new: function(variables) {
-            variables = {'class': 'QuickLay'}
+            $.extend(variables, {'class': 'QuickLay'});
             return TargetMethods.generic(variables, function() {
-                pos = calcBatteryPosition(null);
+                pos = (BCS.battery.guns.size == 0) ? Position.new : calcBatteryPosition(null);
                 return adjustGridToGrid(pos, this.direction, this.distance, 0, this.vi);
             });
         }

@@ -6,6 +6,8 @@ Firemission = {
             id: name,
             type: "ffe", //ADJ, FFE, SUPPRESS, FPF,
             state: "setup",
+            QuickLay: false,
+            tube: null,
             target: {
                 methodObject: null,
                 processMethod: function(object) {

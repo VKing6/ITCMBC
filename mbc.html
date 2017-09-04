@@ -9,13 +9,22 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title></title>
 
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css" crossorigin="anonymous">
+
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+
+
     <link rel="stylesheet" href="view/sidebar.css">
     <link rel="stylesheet" href="style.css">
+
+
     <script src="calculate.js"></script>
     <script src="models\Validator.js"></script>
     <script src="models\Position.js"></script>
@@ -29,6 +38,7 @@
     <script src="controller\Route.js"></script>
     <script src="controller\Firemission.js"></script>
     <script src="controller\BCS.js"></script>
+    <script src="controller\Misc.js"></script>
 
 
     <script src="tables\mortar_81\mortar_81_all_ch0.js"></script>
@@ -87,6 +97,10 @@
             </li>
             <li>
                 <a onClick="Get('BCS.ammo')">Ammo Stores</a>
+            </li>
+            <li class="pusher"></li>
+            <li>
+                <a onClick="Get('Misc.directFire')">Direct Fire</a>
             </li>
             <li class="pusher"></li>
             <li><a onClick="Get('Firemission.new')"><h3>New Firemission</h3></a></li>
@@ -212,6 +226,51 @@
                   </table>
                   <button class="btn btn-primary pull-right" onClick="Post('BCS.ammo', this)">Save</button >
                 </div>
+              </div>
+            </div>
+
+            <!--                          DIRECT FIRE                     -->
+            <div class="row page object" id="directFire" hidden>
+              <div class="col-lg-12">
+                <h1>Direct Fire</h1>
+                <p class="bg-danger"><span class="flash"></span></p>
+                <div class="btn-group gunSelect" role="group" aria-label="...">
+                  <button type="button" class="btn" gun-type="mortar_82" onClick="Controller.Misc.directFire.gun(this)">82mm MK6</button>
+                  <button type="button" class="btn btn-success" gun-type="commando_60" onClick="Controller.Misc.directFire.gun(this)">60mm M6 Commando</button>
+                </div>
+                <input type="hidden" class="variable" id="gunHidden" key="gun" value="mortar_82" value="" name="">
+                <h4>Distance</h4>
+                <div class="input-group">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" onClick="$('#directRange').val(parseInt($('#directRange').val()) - 100)" type="button">-100</button>
+                    <button class="btn btn-default" onClick="$('#directRange').val(parseInt($('#directRange').val()) - 10)"  type="button">-10</button>
+                  </span>
+                  <input type="number" class="form-control center-text variable" key="distance" id="directRange" value="0000" placeholder="Range" aria-describedby="basic-addon1">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" onClick="$('#directRange').val(parseInt($('#directRange').val()) + 10)" type="button">+10</button>
+                    <button class="btn btn-default" onClick="$('#directRange').val(parseInt($('#directRange').val()) + 100)"  type="button">+100</button>
+                  </span>
+                </div>
+                <div id="distanceSlider"></div>
+                <h4>VI</h4>
+                <div class="input-group">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" onClick="$('#directVI').val(parseInt($('#directVI').val()) - 50)" type="button">-50</button>
+                    <button class="btn btn-default" onClick="$('#directVI').val(parseInt($('#directVI').val()) - 10)" type="button">-10</button>
+                  </span>
+                  <input type="number" class="form-control center-text variable" key="vi" id="directVI" placeholder="VI" value="0000" aria-describedby="basic-addon1">
+                  <span class="input-group-btn">
+                    <button class="btn btn-default" onClick="$('#directVI').val(parseInt($('#directVI').val()) + 10)" type="button">+10</button>
+                    <button class="btn btn-default" onClick="$('#directVI').val(parseInt($('#directVI').val()) + 50)"  type="button">+50</button>
+                  </span>
+                </div>
+                <div id="viSlider"></div>
+
+                <button class="btn btn-primary btn-block btn-lg" onClick="Post('Misc.directFire', this)">Calculate</button>
+
+                <hr>
+                <h2>Charge <span id="dirCharge"></span></h2>
+                <h2>Quadrant: <span id="dirQuad"></span></h2>
               </div>
             </div>
 
@@ -488,6 +547,24 @@
     <script src="controller\BCS.js"></script>
     <script src="test.js"></script>
     <script>
+
+
+      $( "#distanceSlider" ).slider({
+          min:0,
+          max:4500,
+          value:0,
+          slide: function(event, ui) {
+              $('#directRange').val(ui.value);
+          }
+      });
+      $( "#viSlider" ).slider({
+          min: -500,
+          max: 500,
+          value: 0,
+          slide: function(event, ui) {
+              $('#directVI').val(ui.value);
+          }
+      });
       View.init();
     </script>
   </body>

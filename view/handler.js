@@ -13,12 +13,8 @@ View = {
         var hash = window.location.hash;
         if(hash == "") return;
         hash = hash.replace('#','');
-        params = hash.split("&");
-        for (var i = params.length - 1; i >= 0; i--) {
-            param = params[i];
-            kv = param.split('=');
-            this[kv[0]](kv[1]);
-        }
+        params = hash.split(".");
+        window.Get(hash, []);
     },
     save: function(element) {
         element = $(element).parents('.page');
