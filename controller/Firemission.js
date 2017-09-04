@@ -23,6 +23,7 @@ Controller.Firemission = {
                 firemission.engagement.mof = "adj";
             }
             methodFields = $(source).parents('.' + object.targetMethod);
+            console.log('METHOD FIELDS ', methodFields);
             method = View.helpers.formToModel(methodFields, true, true);
             firemission.target.processMethod(method);
             name = object.name;
@@ -30,9 +31,15 @@ Controller.Firemission = {
             if(Firemission.validator.validate(firemission)) {
                 delete window.BCS.firemissions[firemission.id];
                 firemission.id = object.name;
-                firemission.state = "engagement";
-                window.BCS.firemissions[firemission.id] = firemission;
-                Controller.Firemission.engagement.get(firemission.id);
+                if(firemission.target.methodObject.class == "QuickLay") {
+                    window.BCS.firemissions[firemission.id] = firemission;
+                    firemission.state = "solutions";
+                    Controller.Firemission.solutions.get(firemission.id);
+                } else{
+                    firemission.state = "engagement";
+                    window.BCS.firemissions[firemission.id] = firemission;
+                    Controller.Firemission.engagement.get(firemission.id);
+                }
             }else{
                 View.flash(Firemission.validator.errors);
             }

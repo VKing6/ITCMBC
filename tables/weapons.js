@@ -39,16 +39,62 @@ var weapons = {
         },
         "qdMod": 1333
     },
-    "mortar_82": {
-        "tableType": "RTAB",
+    "howitzer_155": {
+        "displayName": "M198",
+        "tableType": "ATAB",
+        "angles": {
+            "low": [0,45],
+            "high": [45,85]
+        },
         "roundTypes": {
-            "all": {"charges": [0, 1, 2]}
-        }
+            "HE": {
+                "tables": [
+                    {"charge":1, "table": howitzer_155_he_ch1_la},
+                    {"charge":1, "table": howitzer_155_he_ch1_ha},
+                ]
+            },
+            "WP": {
+                "tables": [
+                    {"charge":1, "table": howitzer_155_he_ch1_la},
+                    {"charge":1, "table": howitzer_155_he_ch1_ha},
+                ]
+            }
+        },
+        "qdMod": 0
     },
-    "mortar_82_nwr": {
-        "tableType": "RTAB",
+    "commando_60": {
+        "displayName": "M6 Commando Mortar",
+        "tableType": "ATAB",
+        "angles": {
+            "high": [45,85]
+        },
         "roundTypes": {
-            "all": {"charges": [0, 1, 2]}
-        }
+            "all": {
+                "tables": [
+                    {"charge":0, "table": commando_60_all_ch0},
+                    {"charge":1, "table": commando_60_all_ch1},
+                    {"charge":2, "table": commando_60_all_ch2},
+                    {"charge":3, "table": commando_60_all_ch3}
+                ]
+            }
+        },
+        "qdMod": 0
+    },
+    "mortar_82": {
+        "displayName": "Mk6",
+        "tableType": "ATAB",
+        "angles": {
+            "high": [45,85]
+        },
+        "roundTypes": {
+            "all": {
+                "tables": [
+                    {"charge":0, "table": mortar_82_all_ch0},
+                    {"charge":1, "table": mortar_82_all_ch1},
+                    {"charge":2, "table": mortar_82_all_ch2}
+                ]
+            }
+        },
+        "qdMod": 0
     }
 };

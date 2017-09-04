@@ -62,7 +62,10 @@ function calcBatteryPosition(firemission) {
         positions.push(gun.position);
     }
     pos = calcAverage(positions);
-    firemission.solutions.bty.position = pos;
+    if(firemission != null) {
+        firemission.solutions.bty.position = pos;
+    }
+    return pos;
 }
 
 function setSheafTargets(firemission) {

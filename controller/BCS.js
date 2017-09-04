@@ -190,7 +190,6 @@ slc3 = {
     "UK7107":{"name":"UK7107", "position":{"mgrs":{"easting": "6300", "northing": "1638"}, "mgrs_string": "63001638", "elev": "94"}, "friendly": "false"}
 }
 BCS.knownPoints = $.extend(BCS.knownPoints, slc3);
-*/
 slc4 = {
     "UK7101":{"name":"UK7101", "position":{"mgrs":{"easting": "", "northing": ""}, "mgrs_string": "62241662", "elev": "88"}, "friendly": "false"},
     "UK7102":{"name":"UK7102", "position":{"mgrs":{"easting": "", "northing": ""}, "mgrs_string": "62491645", "elev": "88"}, "friendly": "false"},
@@ -206,3 +205,22 @@ slc4 = {
     "UK7112":{"name":"UK7112", "position":{"mgrs":{"easting": "", "northing": ""}, "mgrs_string": "62931727", "elev": "88"}, "friendly": "false"}
 }
 BCS.knownPoints = $.extend(BCS.knownPoints, slc4);
+
+slcx = {
+    "UK7201":{"name":"UK7201", "position":{"mgrs":{"easting": "1577", "northing": "0789"}, "mgrs_string": "15770789", "elev": "115"}, "friendly": "false"},
+    "UK7202":{"name":"UK7202", "position":{"mgrs":{"easting": "1533", "northing": "0773"}, "mgrs_string": "15330773", "elev": "115"}, "friendly": "false"},
+    "UK7203":{"name":"UK7203", "position":{"mgrs":{"easting": "1539", "northing": "0798"}, "mgrs_string": "15390798", "elev": "115"}, "friendly": "false"},
+    "UK7204":{"name":"UK7204", "position":{"mgrs":{"easting": "1496", "northing": "0729"}, "mgrs_string": "14960729", "elev": "115"}, "friendly": "false"},
+    "UK7205":{"name":"UK7205", "position":{"mgrs":{"easting": "1496", "northing": "0715"}, "mgrs_string": "14960715", "elev": "115"}, "friendly": "false"},
+}
+BCS.knownPoints = $.extend(BCS.knownPoints, slcx);
+*/
+slcxii = {
+    "UK1028":{"name":"UK1028", "position":{"mgrs":{"easting": "", "northing": ""}, "mgrs_string": "12350380", "elev": "101"}, "friendly": "false"},
+    "UK1021":{"name":"UK1021", "position":{"mgrs":{"easting": "", "northing": ""}, "mgrs_string": "13830372", "elev": "82"}, "friendly": "false"},
+    "UK1022":{"name":"UK1022", "position":{"mgrs":{"easting": "", "northing": ""}, "mgrs_string": "14090378", "elev": "75"}, "friendly": "false"},
+    "UK1025":{"name":"UK1025", "position":{"mgrs":{"easting": "", "northing": ""}, "mgrs_string": "13010433", "elev": "121"}, "friendly": "false"},
+    "UK1026":{"name":"UK1026", "position":{"mgrs":{"easting": "", "northing": ""}, "mgrs_string": "13120438", "elev": "123"}, "friendly": "false"},
+    "UK1027":{"name":"UK1027", "position":{"mgrs":{"easting": "", "northing": ""}, "mgrs_string": "12510403", "elev": "119"}, "friendly": "false"}
+}
+BCS.knownPoints = $.extend(BCS.knownPoints, slcxii);

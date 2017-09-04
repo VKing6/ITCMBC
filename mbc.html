@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title></title>
 
@@ -34,7 +36,6 @@
     <script src="tables\mortar_81\mortar_81_all_ch2.js"></script>
     <script src="tables\mortar_81\mortar_81_all_ch3.js"></script>
     <script src="tables\mortar_81\mortar_81_all_ch4.js"></script>
-    <script src="tables\mortar_82\mortar_82.js"></script>
 
     <script src="tables\howitzer_105\howitzer_105_all_ch0_la.js"></script>
     <script src="tables\howitzer_105\howitzer_105_all_ch1_la.js"></script>
@@ -42,6 +43,18 @@
     <script src="tables\howitzer_105\howitzer_105_all_ch0_ha.js"></script>
     <script src="tables\howitzer_105\howitzer_105_all_ch1_ha.js"></script>
     <script src="tables\howitzer_105\howitzer_105_all_ch2_ha.js"></script>
+
+    <script src="tables\howitzer_155\howitzer_155_he_ch1_la.js"></script>
+    <script src="tables\howitzer_155\howitzer_155_he_ch1_ha.js"></script>
+
+    <script src="tables\mortar_82\mortar_82_all_ch0.js"></script>
+    <script src="tables\mortar_82\mortar_82_all_ch1.js"></script>
+    <script src="tables\mortar_82\mortar_82_all_ch2.js"></script>
+
+    <script src="tables\commando_60\commando_60_all_ch0.js"></script>
+    <script src="tables\commando_60\commando_60_all_ch1.js"></script>
+    <script src="tables\commando_60\commando_60_all_ch2.js"></script>
+    <script src="tables\commando_60\commando_60_all_ch3.js"></script>
     
     <script src="tables\weapons.js"></script>
     <script src="ATAB.js"></script>
@@ -126,9 +139,11 @@
                     <dl>
                       <dt>Battery Callsign: </dt>  <dd><input type="text" class="variable" key="callsign"></dd>
                       <dt>Gun Type: </dt>  <dd><select class="variable" key="type">
+                            <option value="commando_60">60mm M6 Commando Mortar</option>
                             <option value="mortar_82">Mk6</option>
                             <option value="mortar_81">L16</option>
                             <option value="howitzer_105">L118</option>
+                            <option value="howitzer_155">M198</option>
                           </select></dd>
                     </dl>
                     <table class="table">
@@ -223,6 +238,7 @@
                     <option value="grid">Grid</option>
                     <option value="shift">Shift</option>
                     <option value="polar">Polar</option>
+                    <option value="quicklay">QuickLay</option>
                   </select></dd>
                 </dl>
                 <hr>
@@ -250,6 +266,15 @@
                   <div class="col-sm-8 changer polar buttonTarget targetMethods  object-nested" object-class="TargetMethods.Polar" hidden>
                     <dl>
                       <dt>Observer: </dt><dd><select class="knownpoint" key="point"><option>FO 12</option></select></dd>
+                      <dt>Direction: </dt><dd><input type="number" value=0 class="variable" key="direction"> mils</dd>
+                      <dt>Distance: </dt><dd><input type="number" value=0 class="variable" key="distance"> meters</dd>
+                      <dt>VI: </dt><dd><input type="number" value=0 class="variable" key="vi"> meters</dd>
+                    </dl>
+                    <button class="btn btn-primary pull-right" onClick="Post('Firemission.setup', this)">Next</button >
+                  </div>
+
+                  <div class="col-sm-8 changer quicklay buttonTarget targetMethods  object-nested" object-class="TargetMethods.QuickLay" hidden>
+                    <dl>
                       <dt>Direction: </dt><dd><input type="number" value=0 class="variable" key="direction"> mils</dd>
                       <dt>Distance: </dt><dd><input type="number" value=0 class="variable" key="distance"> meters</dd>
                       <dt>VI: </dt><dd><input type="number" value=0 class="variable" key="vi"> meters</dd>
@@ -460,8 +485,8 @@
       </div>
       <!-- /#page-content-wrapper -->
     </div>
-    <script src="test.js"></script>
     <script src="controller\BCS.js"></script>
+    <script src="test.js"></script>
     <script>
       View.init();
     </script>
