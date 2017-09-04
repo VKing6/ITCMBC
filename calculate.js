@@ -32,11 +32,6 @@ function calculate(firemission) {
                 });
             }
         }
-        if(solution.type == "mortar_82" || solution.type == "mortar_81") {
-            solution.calcShell = "all";
-        } else {
-            solution.calcShell = solution.shell;
-        }
         firemission.solutions[gun.name] = solution;
         if(i == 1 || bty.guns.length == 1) {
             firemission.solutions.bty = solution;
@@ -165,7 +160,7 @@ function getSolutions(solutionBase) {
     //console.log(solutionBase);
     var distance = calcDistance(solutionBase.sourcePos.mgrs, solutionBase.targetPos.mgrs);
     var azimuth = calcDirection(solutionBase.sourcePos.mgrs, solutionBase.targetPos.mgrs);
-    var solutions = CalcQuadrants(solutionBase.type, solutionBase.calcShell, distance, solutionBase.targetPos.elev - solutionBase.sourcePos.elev);
+    var solutions = CalcQuadrants(solutionBase.type, solutionBase.shell, distance, solutionBase.targetPos.elev - solutionBase.sourcePos.elev);
     return {'azimuth' : azimuth / 360 * 6400, 'distance' : distance, 'quadrants' : solutions};
 }
 
