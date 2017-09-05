@@ -62,6 +62,46 @@ var weapons = {
         },
         "qdMod": 0
     },
+    "mlrs_230": {
+        "displayName": "230mm MLRS",
+        "tableType": "ATAB",
+        "angles": {
+            "low": [0,45],
+            "high": [45,85]
+        },
+        "roundTypes": {
+            "all": {
+                "tables": [
+                    {"charge":"Close", "table": mlrs_230_all_close_la},
+                    {"charge":"Close", "table": mlrs_230_all_close_ha},
+                    {"charge":"Medium", "table": mlrs_230_all_medium_la},
+                    {"charge":"Medium", "table": mlrs_230_all_medium_ha},
+                    {"charge":"Full", "table": mlrs_230_all_full_la},
+                    {"charge":"Full", "table": mlrs_230_all_full_ha}
+                ]
+            }
+        },
+        "qdMod": 0
+    },
+    "mlrs_122": {
+        "displayName": "122mm RHS GRAD",
+        "tableType": "ATAB",
+        "angles": {
+            "low": [0,45],
+            "high": [45,85]
+        },
+        "roundTypes": {
+            "all": {
+                "tables": [
+                    {"charge":"6000-7700", "table": mlrs_122_all_6k_la},
+                    {"charge":"6000-7700", "table": mlrs_122_all_6k_ha},
+                    {"charge":"15700-20500", "table": mlrs_122_all_13k_la},
+                    {"charge":"15700-20500", "table": mlrs_122_all_13k_ha}
+                ]
+            }
+        },
+        "qdMod": 0
+    },
     "commando_60": {
         "displayName": "M6 Commando Mortar",
         "tableType": "ATAB",
