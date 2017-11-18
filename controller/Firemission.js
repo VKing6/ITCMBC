@@ -111,6 +111,7 @@ Controller.Firemission = {
                     '<td>' + solution.fuze + '</td>' +
                     '<td>' + solution.quadrants[num].displayCharge + '</td>' +
                     '<td>' + solution.az + '</td>' +
+                    '<td>' + solution.df + '</td>' +
                     '<td>' + solution.quadrants[num].qd + '</td>' +
                     '<td>' + solution.quadrants[num].tof + '</td>' +
                 '</tr>');

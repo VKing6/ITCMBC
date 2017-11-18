@@ -18,6 +18,25 @@ var weapons = {
         },
         "qdMod": 0
     },
+    "mortar_81_itc": {
+        "displayName": "ITC M252",
+        "tableType": "ATAB",
+        "angles": {
+            "high": [45,85]
+        },
+        "roundTypes": {
+            "all": {
+                "tables": [
+                    {"charge":0, "table": ACE_1Rnd_82mm_Mo_HE_ch0},
+                    {"charge":1, "table": ACE_1Rnd_82mm_Mo_HE_ch1},
+                    {"charge":2, "table": ACE_1Rnd_82mm_Mo_HE_ch2},
+                    {"charge":3, "table": ACE_1Rnd_82mm_Mo_HE_ch3},
+                    {"charge":4, "table": ACE_1Rnd_82mm_Mo_HE_ch4}
+                ]
+            }
+        },
+        "qdMod": 0
+    },
     "howitzer_105": {
         "displayName": "L118",
         "tableType": "ATAB",

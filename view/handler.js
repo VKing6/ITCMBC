@@ -2,7 +2,7 @@ View = {
     open:function(id, object) {
         //window.location.hash = '#open=' + id; //THIS NEEDS TO BE CHANGED
         $('.flash').html('');
-        $('#content .page').hide();
+        $('.page').hide();
         this.populate($('#'+id), object);
         $('#content #' + id).show();
     },
@@ -10,6 +10,7 @@ View = {
         $('.flash').html(message);
     },
     init: function() {
+        $('.page').hide();
         var hash = window.location.hash;
         if(hash == "") return;
         hash = hash.replace('#','');

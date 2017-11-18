@@ -48,6 +48,12 @@
     <script src="tables\mortar_81\mortar_81_all_ch3.js"></script>
     <script src="tables\mortar_81\mortar_81_all_ch4.js"></script>
 
+    <script src="tables\mortar_81_itc\mortar_81_all_ch0.js"></script>
+    <script src="tables\mortar_81_itc\mortar_81_all_ch1.js"></script>
+    <script src="tables\mortar_81_itc\mortar_81_all_ch2.js"></script>
+    <script src="tables\mortar_81_itc\mortar_81_all_ch3.js"></script>
+    <script src="tables\mortar_81_itc\mortar_81_all_ch4.js"></script>
+
     <script src="tables\howitzer_105\howitzer_105_all_ch0_la.js"></script>
     <script src="tables\howitzer_105\howitzer_105_all_ch1_la.js"></script>
     <script src="tables\howitzer_105\howitzer_105_all_ch2_la.js"></script>
@@ -136,6 +142,12 @@
                       </dd>
                       <dt>Firemission Code: </dt> <dd><input type="text" placeholder="time" value="FM" class="variable" key="firemissionCode"></dd>
                       <dt>Firemission Start: </dt><dd> <input type="number" placeholder="time" value="0001" class="variable" key="firemissionStart"> </dd>
+                      <dt>Direction mode: </dt>  <dd>
+                        <select class="variable" key="dir">
+                          <option value="df">Deflection</option>
+                          <option value="az">Azimuth</option>
+                        </select>
+                      </dd>
                     </dl>
                   </p>
                 </div>
@@ -157,19 +169,21 @@
                             <option value="commando_60">60mm M6 Commando Mortar</option>
                             <option value="mortar_82">Mk6</option>
                             <option value="mortar_81">L16</option>
+                            <option value="mortar_81_itc">ITC M252</option>
                             <option value="howitzer_105">L118</option>
                             <option value="howitzer_155">M198</option>
                           </select></dd>
                     </dl>
                     <table class="table">
                       <thead>
-                        <tr><th>Gun #</th><th>Position</th><th>Elevation</th><th><button class="btn btn-xs btn-primary" onClick="Controller.BCS.battery.printGun()"><i class="fa fa-plus"></i></button></th></tr>
+                        <tr><th>Gun #</th><th>Position</th><th>Elevation</th><th>Direction</th><th><button class="btn btn-xs btn-primary" onClick="Controller.BCS.battery.printGun()"><i class="fa fa-plus"></i></button></th></tr>
                       </thead>
                       <tbody id="gun_list">
                         <tr id="gun_template" class="object object-nested gun" hidden>
                           <td><input type="text" value="" class="narrow variable" key="name"></td>
                           <td><input type="text" value="" class="variable" key="position.mgrs_string"></td>
                           <td><input type="text" value="" class="variable" key="position.elev"></td>
+                          <td><input type="text" value="" class="narrow variable" key="direction"></td>
                           <td><button class="btn btn-xs btn-danger" onClick="Controller.BCS.battery.deleteGun(this)"><i class="fa fa-minus"></i></button></td>
                         </tr>
                       </tbody>
@@ -440,6 +454,7 @@
                       <th>Fuze</th>
                       <th>Charge</th>
                       <th>AZ</th>
+                      <th>DF</th>
                       <th>QD</th>
                       <th>TOF</th>
                     </tr>

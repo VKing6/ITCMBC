@@ -3,7 +3,8 @@ Gun = {
         return {
             name: "new_gun",
             position: Position.new(),
-            type: "mortar_82"
+            type: "mortar_82",
+            direction: null
         }
     },
     validator: Validator.new(function(object) {

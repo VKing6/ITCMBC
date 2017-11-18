@@ -23,7 +23,7 @@ Controller.BCS = {
                 gun = Gun.new();
                 gunForm = View.helpers.formToModel(this, true, true);
                 gun.name = gunForm.name;
-                gun.type = gunForm.type;
+                gun.direction = parseInt(gunForm.direction);
                 console.log(gunForm);
                 gun.position = Position.generate(gunForm.position.mgrs_string, gunForm.position.elev);
                 if(Gun.validator.validate(gun)) {
@@ -135,7 +135,8 @@ BCS = {
         alertToSplash: 10,
         windResistance: "_nwr",
         firemissionCode: "FM",
-        firemissionStart: "0001"
+        firemissionStart: "0001",
+        dir: "az"
     },
     battery: {
         callsign: "",

@@ -6,6 +6,7 @@ function calculate(firemission) {
         gun = bty.guns[i];
         solution = {
             piece: gun.name,
+            direction: gun.direction,
             targetPos:null,
             type: bty.type,
             mof: firemission.engagement.mof,
@@ -108,6 +109,7 @@ function fillSolutions(firemission) {
     keys = Object.keys(firemission.solutions);
     for (var i = 0; i < keys.length; i++) {
         solution = firemission.solutions[keys[i]];
+        console.log("solution ",solution);
         solution.quadrants = [];
         results = getSolutions(solution);
         quads = null;
@@ -119,6 +121,7 @@ function fillSolutions(firemission) {
                 if(solution.firstCharge == -1) solution.firstCharge = j;
                 quads = res;
                 solution.az = Math.round(results.azimuth);
+                solution.df = Math.round(3200 - (solution.az - solution.direction));
                 console.log(quads);
                 sol = {};
                 sol.displayCharge = quads.ch;
