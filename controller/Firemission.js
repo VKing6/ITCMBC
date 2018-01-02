@@ -299,6 +299,26 @@ Controller.Firemission = {
                         return;
                     }else if(count <= parseInt(BCS.options.alertToSplash) * 100 && !messaged) {
                         if(ref == 'shot') firemission.shotState = 'SPLASH';
+                        if(BCS.options.baws === "on") {
+                            var audio = new Audio('assets/audio/splash.mp3');
+                            audio.onended = function(){
+                                console.log("splash announce", firemission.name);
+                                var numbers = firemission.name.substring(firemission.name.length - 2);
+                                console.log(numbers);
+                                if(!isNaN(numbers)) {
+                                    console.log("audio playing");
+                                    if(numbers[0] != "0") {
+                                        var soundNumber = new Audio(`assets/audio/${numbers[0]}.mp3`);
+                                        soundNumber.onended = () => {new Audio(`assets/audio/${numbers[1]}.mp3`).play();};
+                                        soundNumber.play();
+
+                                    } else {
+                                        new Audio(`assets/audio/${numbers[1]}.mp3`).play();
+                                    }
+                                }
+                            };
+                            audio.play();
+                        }
                         Get('Firemission.sidebar');
                         if($('#firemission_solution').find('input[key="id"]').val() == timer.id)
                         {
@@ -311,7 +331,7 @@ Controller.Firemission = {
                     {
                         firemission.timers[ref].clock.html(count / 100);
                     }
-                    console.log($('#firemission_solution').find('input[key="id"]').val(), firemission.shotState, timer.id, count, ref);
+                    //console.log($('#firemission_solution').find('input[key="id"]').val(), firemission.shotState, timer.id, count, ref);
                 }
             , 10, firemission, ref);
             timer.counter = counter;

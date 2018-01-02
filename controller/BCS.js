@@ -136,6 +136,7 @@ BCS = {
         windResistance: "_nwr",
         firemissionCode: "FM",
         firemissionStart: "0001",
+        baws: "off",
         dir: "az"
     },
     battery: {
