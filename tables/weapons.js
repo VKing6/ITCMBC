@@ -115,5 +115,23 @@ var weapons = {
             }
         },
         "qdMod": 0
+    },
+    "howitzer_b_155": {
+        "displayName": "Sholef",
+        "tableType": "ATAB",
+        "angles": {
+            "low": [0,45],
+            "high": [45,85]
+        },
+        "roundTypes": {
+            "all": {
+                "tables": [
+                    {"charge":"close", "table": howitzer_b_155_ch0_la},
+                    {"charge":"medium", "table": howitzer_b_155_ch1_la},
+                    {"charge":"far", "table": howitzer_b_155_ch2_la},
+                ]
+            }
+        },
+        "qdMod": 0
     }
 };
