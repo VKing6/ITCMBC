@@ -81,6 +81,27 @@ var weapons = {
         },
         "qdMod": 0
     },
+    "mlrs_230": {
+        "displayName": "230mm MLRS",
+        "tableType": "ATAB",
+        "angles": {
+            "low": [0,45],
+            "high": [45,85]
+        },
+        "roundTypes": {
+            "all": {
+                "tables": [
+                    {"charge":"Close", "table": mlrs_230_all_close_la},
+                    {"charge":"Close", "table": mlrs_230_all_close_ha},
+                    {"charge":"Medium", "table": mlrs_230_all_medium_la},
+                    {"charge":"Medium", "table": mlrs_230_all_medium_ha},
+                    {"charge":"Full", "table": mlrs_230_all_full_la},
+                    {"charge":"Full", "table": mlrs_230_all_full_ha}
+                ]
+            }
+        },
+        "qdMod": 0
+    },
     "commando_60": {
         "displayName": "M6 Commando Mortar",
         "tableType": "ATAB",
@@ -126,9 +147,16 @@ var weapons = {
         "roundTypes": {
             "all": {
                 "tables": [
-                    {"charge":"close", "table": howitzer_b_155_ch0_la},
-                    {"charge":"medium", "table": howitzer_b_155_ch1_la},
-                    {"charge":"far", "table": howitzer_b_155_ch2_la},
+                    {"charge":"single1", "table": howitzer_b_155_ch0_la},
+                    {"charge":"single2", "table": howitzer_b_155_ch1_la},
+                    {"charge":"single3", "table": howitzer_b_155_ch2_la},
+                    {"charge":"single4", "table": howitzer_b_155_ch2_la},
+                    {"charge":"single5", "table": howitzer_b_155_ch2_la},
+                    {"charge":"single1", "table": howitzer_b_155_ch0_ha},
+                    {"charge":"single2", "table": howitzer_b_155_ch1_ha},
+                    {"charge":"single3", "table": howitzer_b_155_ch2_ha},
+                    {"charge":"single4", "table": howitzer_b_155_ch2_ha},
+                    {"charge":"single5", "table": howitzer_b_155_ch2_ha},
                 ]
             }
         },
